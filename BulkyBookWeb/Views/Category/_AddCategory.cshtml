@@ -1,0 +1,24 @@
+﻿@model Data.Models.tbCategory
+
+
+<!-- Modal -->
+
+<div class="modal-header">
+    <h5 class="modal-title" id="addBookModal">Add a new Category</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<form id="addCategoryForm">
+    <input type="hidden" name="ID" value="@Model.Id" />
+    <div class="modal-body">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Title" name="Category" value="@Model.Category" aria-label="Title" aria-describedby="basic-addon1" required>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+    </div>
+</form>
+
+

@@ -1,0 +1,26 @@
+﻿@model List<Data.Models.tbCategory>
+
+@if(Model.Count() > 0){
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Category</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model)
+        {
+            <tr id="@category.Id">
+                <th scope="row">@category.Id</th>
+                <td>@category.Category</td>
+                <td><a class="btn btn-danger" onclick="delete_category(@category.Id)">Delete</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+else {
+    <p class="h3">No Category Here Yet.</p>
+}

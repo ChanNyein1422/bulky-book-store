@@ -1,0 +1,172 @@
+﻿<h3>Explore Our Books</h3>
+<div class="ms-2">
+    <button type="button" class="btn btn-light border-dark my-3" onclick="load_addform()">
+        + Upload Book
+    </button>
+
+    <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div id="formholder"></div>
+            </div>
+
+        </div>
+    </div>
+    <div id="bookView">
+
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        "use strict";
+
+        $(function () {
+            getBook();
+        });
+
+        function getBook(){
+            $.ajax({
+                cache: false,
+                url: '@Url.Action("_BookList","Book")',
+                success: function (result) {
+                    $("#bookView").empty().append(result);
+                }
+            });
+        }
+
+        function load_category(){
+            $.ajax({
+                cache: false,
+                url: '@Url.Action("CategoryList","Category")',
+                beforeSend: function(){
+                },
+                success: function(response){
+                    $('#category_select').empty();
+                    $('#category_select').append("<option value='0'>Select Category</option>");
+                    for(var i = 0; i < response.length; i++){
+                        $('#category_select').append(`<option value='${response[i].Id}'>${response[i].Category}</option>`);
+
+                    }
+                }
+            });
+        }
+
+        function load_addform() {
+      
+            popup_modalform('#addBookModal', '#formholder', '@Url.Action("_AddBook","Book")', form_submit);
+        }
+
+        function popup_modalform(modal, formholder, url, callback) {
+            $.ajax({
+                cache: false,
+                url: url,
+                beforeSend: function () {
+                    showmodal(modal)
+                },
+                success: function (result) {
+                    $(formholder).empty().append(result);
+                     load_category();
+                    callback();
+                },
+                complete: function () {
+                }
+            });
+        }
+        function FileOnChange() {
+          
+            $('#upload').change(function () {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $("#bookUpload").val(e.target.result.split(",")[1]);
+                    
+                }
+                reader.readAsDataURL(this.files[0]);
+
+            });
+
+            $('#thumbnail').change(function () {
+                var input = this;
+                var url = $(this).val();
+                var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+
+                const QUALITY = 0.5;
+
+                const canvas = document.getElementById('canvas');
+                const ctx = canvas.getContext('2d');
+                const imageInput = document.getElementById('thumbnail');
+
+                const file = this.files[0];
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.addEventListener('load', function () {
+                        let width = img.width;
+                        let height = img.height;
+
+
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        // Draw image on canvas with resized dimensions
+                        ctx.drawImage(img, 0, 0, width, height);
+
+
+                        // Get resized image data as a base64 encoded JPEG
+                        //const resizedImage = canvas.toDataURL('image/jpeg');
+                        //console.log(resizedImage);
+                        canvas.toBlob(function (blob) {
+                            console.log(file.name, " ", file.type);
+                            const compressedFile = new File([blob], file.name, { type: file.type });
+                            console.log("Blob : ", blob);
+                            const finalcompressed = canvas.toDataURL('image/jpeg', 50 / 100);
+                            console.log(finalcompressed);
+                            $("#thumbnailUpload").val(finalcompressed.split(",")[1]);
+                        }, file.type, QUALITY);
+                    });
+                    img.src = this.result;
+                }
+                reader.readAsDataURL(file);
+
+            });
+        }
+
+        function form_submit() {
+            FileOnChange();
+            $('#addForm').submit(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    cache: false,
+                    url: '@Url.Action("UpSert","Book")',
+                    type: "Post",
+                    data: $(this).serialize(),
+                    beforeSend: function () {
+                        $('.btn').prop("disabled", true);
+                    },
+                    success: function (myData) {
+                        
+                        getBook();
+                    },
+                    complete: function () {
+                        hidemodal("#addBookModal");
+                        alert("New Book Added! ");
+                        $('.btn').prop("disabled", false);
+                    }
+                });
+
+            });
+        }
+
+        function showmodal(div) {
+            $(div).modal('show');
+        }
+
+        function hidemodal(div) {
+            $(div).modal('hide');
+        }
+
+    </script>
+}

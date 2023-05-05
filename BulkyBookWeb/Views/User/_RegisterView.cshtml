@@ -1,0 +1,69 @@
+﻿<form class="mt-5" id="RegisterForm">
+            <div>
+                <h4 class="text-center">Welcome to Bulky Book Store</h4>
+            </div>
+            <div class="mt-3">
+                <label>Please Enter Your Name</label>
+                <input type="text" name="Name" class="form-control mt-2" id="txt-name" required/>
+            </div>
+            <div class="mt-3">
+                <label>Please Enter Your Email</label>
+                <input type="email" name="Email" class="form-control mt-2" id="txt-email" required/>
+            </div>
+            <div class="mt-3">
+                <label>Create Your Password</label>
+        <input type="password" name="Password" class="form-control mt-2" id="txt-password" required />
+            </div>
+            <div class="mt-3">
+                <label>Confirm Your Password</label>
+        <input type="password" name="ConfirmPassword" class="form-control mt-2" id="txt-confirm-password" required />
+            </div>
+
+            <div class="mt-5">
+                <a class="btn btn-secondary" asp-controller="User" asp-action="Index">Back</a>
+                <button class="btn btn-primary float-end" type="submit">Register</button>
+            </div>
+        </form>
+
+@section scripts{
+    <script>
+        $(function () {
+            register();
+        })
+
+        function register() {
+            $('#RegisterForm').submit(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    cache: false,
+                    url: "../User/UpSert",
+                    type: "Post",
+                    data: $(this).serialize()
+                    ,
+                    beforeSend: function () {
+                    },
+                    success: function (response) {
+                        if (response.ReturnMessage == "Unmatch Password"){
+                            alert("The password aren't matching");
+                        }
+                        else if (response.ReturnMessage == "Email Already Exists"){
+                            alert("This Email is already registered");
+                        }
+                        else if (response.ReturnMessage == "User Name Already Exists"){
+                            alert("This User Name is already registered.");
+                        }
+                        else if(response != null){
+                       alert("Welcome, "+response.Name);
+                       window.location="../";
+                        }else{
+                            alert("Registration Failed");
+                        }
+                    },
+                    complete: function () {
+                    }
+                });
+            });
+        }
+    </script>
+}

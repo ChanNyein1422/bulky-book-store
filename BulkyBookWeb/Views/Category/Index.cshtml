@@ -1,0 +1,108 @@
+﻿<div>
+    <h3 class="ps-2">View Categories</h3>
+    <div class="my-3 float-end">
+        <button class="btn btn-primary" onclick="load_addform()">
+        Add Category
+        </button>
+    </div>
+    
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div id="formholder"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="catView">
+
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        "use strict";
+
+        $(function () {
+            getCategoryView();
+        });
+
+        function delete_category(cat_id){
+            $.ajax({
+                cache: false,
+                url: '@Url.Action("Delete","Category")',
+                data: { id : cat_id },
+                success: function (myData) {
+                    alert("Delete Successful");
+                   getCategoryView();
+                }
+            });
+        }
+      
+        function getCategoryView(){
+            $.ajax({
+                cache: false,
+                url: '@Url.Action("_CategoryView","Category")',
+                success: function(result){
+                    $("#catView").empty().append(result);
+                }
+            })
+        }
+
+        function load_addform() {
+
+            popup_modalform('#addCategoryModal', '#formholder', '@Url.Action("_AddCategory","Category")', form_submit);
+        }
+
+        function popup_modalform(modal, formholder, url, callback) {
+            $.ajax({
+                cache: false,
+                url: url,
+                beforeSend: function () {
+                    showmodal(modal)
+                },
+                success: function (result) {
+                    $(formholder).empty().append(result);
+                    callback();
+                },
+                complete: function () {
+                }
+            });
+        }
+        function form_submit() {
+            $('#addCategoryForm').submit(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    cache: false,
+                    url: '@Url.Action("UpSert","Category")',
+                    type: "Post",
+                    data: $(this).serialize(),
+                    beforeSend: function () {
+                        $('.btn').prop("disabled", true);
+                    },
+                    success: function (myData) {
+                        alert("Category Added");
+
+                    },
+                    complete: function () {
+                        hidemodal("#addCategoryModal");
+                        $('.btn').prop("disabled", false);
+                        getCategoryView();
+                    }
+                });
+
+            });
+        }
+
+        function showmodal(div) {
+            $(div).modal('show');
+        }
+
+        function hidemodal(div) {
+            $(div).modal('hide');
+        }
+
+    </script>
+}

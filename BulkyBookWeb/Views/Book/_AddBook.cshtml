@@ -1,0 +1,54 @@
+﻿@model Data.Models.tbBook
+
+<!-- Modal -->
+
+<div class="modal-header">
+    <h5 class="modal-title" id="addBookModal">Add a new book</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<form id="addForm">
+    <input type="hidden" name="ID" value="@Model.Id" />
+    <input type="hidden" name="bookUpload" value="@Model.BookUpload" id="bookUpload" />
+    <input type="hidden" name="Thumbnail" value="@Model.Thumbnail" id="thumbnailUpload" />
+    <div class="modal-body">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Title" name="Title" value="@Model.Title" aria-label="Title" aria-describedby="basic-addon1" required>
+        </div>
+        <select class="form-select mb-3" id="category_select" name="@Model.Category" aria-label="Category Select">
+        </select>
+
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Author" name="Author" value="@Model.Author" aria-label="Author" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Publisher" name="Publisher" value="@Model.Publisher" aria-label="Publisher" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="date" class="form-control" placeholder="PublishDate" name="PublishDate" value="@Model.PublishDate" aria-label="PublishDate" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <input type="number" class="form-control" placeholder="Price" name="Price" value="@Model.Price" aria-label="Price" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+            <p>Select a File to Upload</p>
+            <br />
+            <input type="file" class="form-control mt-3" id="upload" value="@Model.BookUpload" aria-label="PostPDF" aria-describedby="basic-addon1" accept=".pdf" required><br />
+            
+        </div>
+        <div class="input-group mb-3">
+            <p>Choose your thumbnail (Optional) </p>
+            <br />
+            <input type="file" class="form-control mt-3" id="thumbnail" value="@Model.Thumbnail" aria-label="PostThumbnail" aria-describedby="basic-addon1"><br />
+            <canvas id="canvas" class="align-items-center justify-content-center" style="max-width: 400px;"></canvas>
+
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+    </div>
+</form>
+
+
