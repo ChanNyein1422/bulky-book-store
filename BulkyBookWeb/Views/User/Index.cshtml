@@ -1,6 +1,4 @@
-﻿
-
-<div class="row">
+﻿<div class="row">
     <div class="col-md-4"></div>
     <div class="col-md-4">
         <form class="loginform mt-5" >
@@ -21,16 +19,13 @@
                 <button class="btn btn-primary float-end" type="submit">Login</button>
             </div>
         </form>
-
-
     </div>
-    <div class="col-md-4"></div>
-
-</div>
+ </div>
 
 @section scripts{
     <script>
-        $(function(){
+        "use strict";
+        $(function () {
             login();
         })
 
@@ -64,6 +59,42 @@
                 });
             });
         }
+
+        function get_users() {
+            $.ajax({
+                cache: false,
+                url: '@Url.Action("_UserList","User")'
+            });
+        }
+        function confirm_delete(id) {
+            let result = confirm("Are you sure want to delete this account?");
+            if (result) {
+                delete_account(id);
+            }
+        }
+
+        function delete_account(id) {
+            $.ajax({
+                cache: false,
+                url: '@Url.Action("Delete","User")',
+                data: {
+                    id: id
+                },
+                success: function (response) {
+                    if (response == 1) {
+                        alert("Account Deleted!");
+
+                    }
+                    else {
+                        alert("Wrong Credentials");
+                    }
+                },
+                complete: function () {
+                    get_users();
+                }
+            });
+        }
+     
 
     </script>
 }

@@ -21,12 +21,17 @@ namespace BulkyBookWeb.Controllers
         }
         public IActionResult _RegisterView()
         {
-            return View();
+            return PartialView();
         }
         public async Task<IActionResult> _EditView(int id)
         {
             var userdata = await _iuser.GetUserByID(id);
             return View(userdata);
+        }
+        public async Task<IActionResult> _UserList()
+        {
+            var userdata = await _iuser.GetAllUsers();
+            return PartialView(userdata);
         }
         [HttpPost]
         public async Task<IActionResult> UpSert(tbUser user)
@@ -34,6 +39,11 @@ namespace BulkyBookWeb.Controllers
             user.CreatedDate = DateTime.Now;
             var userdata = await _iuser.UpSert(user);
             return Ok(userdata);
+        }
+        public async Task<IActionResult> Delete(int id)
+        {
+            var data = await _iuser.Delete(id);
+            return Ok(data);
         }
 
         [HttpPost]

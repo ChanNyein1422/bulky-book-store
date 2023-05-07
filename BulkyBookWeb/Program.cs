@@ -29,10 +29,10 @@ builder.Services.AddScoped<IUserApiRequest, UserApiRequest>();
 builder.Services.AddScoped<IBookApiRequest, BookApiRequest>();
 builder.Services.AddScoped<ICategoryApiRequest, CategoryApiRequest>();
 builder.Services.AddScoped<IAuth, Auth>();
-//builder.Services.Configure<HttpSysOptions>(options =>
-//{
-//    options.MaxRequestBodySize = 52428800; // 50 MB
-//});
+builder.Services.Configure<HttpSysOptions>(options =>
+{
+    options.MaxRequestBodySize = 52428800; // 50 MB
+});
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(o => o.LoginPath = new PathString("/authentication"));
 
@@ -58,6 +58,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=User}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
