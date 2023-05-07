@@ -29,16 +29,14 @@
         <div class="input-group mb-3">
             <input type="number" class="form-control" placeholder="Price" name="Price" value="@Model.Price" aria-label="Price" aria-describedby="basic-addon1">
         </div>
+        <p>Select a File to Upload</p>
         <div class="input-group mb-3">
-            <p>Select a File to Upload</p>
-            <br />
-            <input type="file" class="form-control mt-3" id="upload" value="@Model.BookUpload" aria-label="PostPDF" aria-describedby="basic-addon1" accept=".pdf" required><br />
+            <input type="file" class="form-control" id="upload" value="@Model.BookUpload" aria-label="PostPDF" aria-describedby="basic-addon1" accept=".pdf" required><br />
             
         </div>
+        <p>Choose your thumbnail (Optional) </p>
         <div class="input-group mb-3">
-            <p>Choose your thumbnail (Optional) </p>
-            <br />
-            <input type="file" class="form-control mt-3" id="thumbnail" value="@Model.Thumbnail" aria-label="PostThumbnail" aria-describedby="basic-addon1"><br />
+            <input type="file" class="form-control" id="thumbnail" value="@Model.Thumbnail" aria-label="PostThumbnail" aria-describedby="basic-addon1"><br />
             <canvas id="canvas" class="align-items-center justify-content-center" style="max-width: 400px;"></canvas>
 
         </div>

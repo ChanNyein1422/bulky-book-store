@@ -56,7 +56,9 @@ namespace BulkyBookWeb.Controllers
                     return string.Empty;
             }
         }
-     
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
         public async Task<IActionResult> UpSert(tbBook book)
         {
             if (book.BookUpload != null)
@@ -99,6 +101,7 @@ namespace BulkyBookWeb.Controllers
             if (data == 1)
             {
                 return Json("Success");
+               
             }
             else
             {

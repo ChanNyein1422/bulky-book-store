@@ -1,4 +1,13 @@
 ﻿@model List<Data.Models.tbBook>
+@{
+    var result = User.Identity.IsAuthenticated.ToString();
+    var _role = "Login";
+    if (result == "True")
+    {     
+        _role = User.Claims.ToArray()[BulkyBookWeb.AuthServices.Auth.AuthDataIndex.Role].Value;
+    }
+
+}
 
 @if(Model.Count() > 0){
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
@@ -6,8 +15,15 @@
         {
             <div class="col">
                 <div class="card">
-
-                    <img src="@item.ThumbnailUrl" class="card-img-top" alt="Document Thumbnail">
+                    @if (_role == "Admin")
+                    {
+                        <img src="@item.ThumbnailUrl" class="card-img-top" style="max-height: 200px;" alt="Document Thumbnail">
+                    }
+                    else
+                    {
+                        <img src="@item.ThumbnailUrl" class="card-img-top" style="height: 250px;" alt="Document Thumbnail">
+                    }
+                  
                     <div class="card-body">
                         <h5 class="card-title">@item.Title</h5>
                         <div class="card-text">
@@ -21,6 +37,19 @@
                             @if (item.BookUpload != null)
                             {
                               <a class="btn btn-light border-dark" href="@item.BookUploadUrl" target="_blank">Download Now</a>
+
+                            }
+                            @if (_role == "Admin")
+                            {
+                                <a class="btn btn-danger" onclick="delete_book(@item.Id)">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-success ms-2" href="#">
+                                    <i class="fa-solid fa-cart-shopping me-2"></i>Add to Cart
+                                </a>
                             }
                         </div>
                     </div>

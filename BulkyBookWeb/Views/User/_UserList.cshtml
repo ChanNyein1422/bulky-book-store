@@ -1,0 +1,62 @@
+﻿@model List<Data.Models.tbUser>
+@{
+    var result = User.Identity.IsAuthenticated.ToString();
+    var _id = 0;
+    if (result == "True")
+    {
+        _id = Convert.ToInt32(User.Claims.ToArray()[BulkyBookWeb.AuthServices.Auth.AuthDataIndex.Id].Value);
+    }
+
+}
+<p class="h3 fw-bold">User Accounts</p>
+
+<table class="table align-middle mb-0 bg-white">
+    <thead class="bg-light">
+        <tr>
+            <th>Name & Email</th>
+            <th>Account Type</th>
+            <th>Created Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+        <tbody>
+        @if (Model.Count() > 0)
+        {
+            @foreach (var item in Model)
+            {
+                @if (item.Id != _id)
+                {
+                    <tr id="@item.Id">
+                        <td>
+                        <div class="d-flex align-items-center">
+                            <div class="ms-3">
+                                <p class="fw-bold mb-1">@item.Name</p>
+                                <p class="text-muted mb-0">@item.Email</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@item.UserRole</p>
+                    </td>
+                    <td>@item.CreatedDate</td>
+                    <td>
+                        <button type="button" class="btn btn-link btn-sm btn-rounded">
+                           <a asp-area="" asp-controller="User" asp-action="_EditView" asp-route-id="@item.Id">
+                            Edit
+                           </a>
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm btn-rounded" onclick="confirm_delete(@item.Id)">
+                            Delete Account
+                        </button>
+                    </td>
+                </tr>
+                }
+            }
+        }
+        else
+        {
+            <p class="h4">No User Data Here Yet. </p>
+        }
+        </tbody>
+</table>

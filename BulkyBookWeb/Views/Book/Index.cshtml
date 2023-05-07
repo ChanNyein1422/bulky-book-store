@@ -23,15 +23,33 @@
         "use strict";
 
         $(function () {
-            getBook();
+            get_book();
         });
 
-        function getBook(){
+        function get_book() {
             $.ajax({
                 cache: false,
                 url: '@Url.Action("_BookList","Book")',
                 success: function (result) {
                     $("#bookView").empty().append(result);
+                }
+            });
+        }
+
+        function delete_book(id){
+            $.ajax({
+                cache: false,
+                url: '@Url.Action("DeleteBook", "Book")',
+                data: {id : id},
+                success: function(response){
+                    if (response == "Success"){
+                        alert("Book Deleted");
+                    }else{
+                        alert("Delete Fail");
+                    }
+                },
+                complete: function(){
+                    get_book();
                 }
             });
         }
@@ -147,12 +165,11 @@
                         $('.btn').prop("disabled", true);
                     },
                     success: function (myData) {
-                        
-                        getBook();
+                        alert("New Book Added! ");
+                        get_book();
                     },
                     complete: function () {
                         hidemodal("#addBookModal");
-                        alert("New Book Added! ");
                         $('.btn').prop("disabled", false);
                     }
                 });
