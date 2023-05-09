@@ -43,10 +43,11 @@
                     },
                     beforeSend: function(){
                         $('.btn').prop('disabled', true);
+                        $('.btn').empty().append("<div class='spinner-border spinner-border-sm me-2'></div>Logging In...");
                     },
                     success: function(response){
                         if (response == "Success"){
-                            window.location = "../home";
+                            window.location = "../Book/";
                         }
                         else{
                             $('.btn').prop('diabled', false);
@@ -60,41 +61,6 @@
             });
         }
 
-        function get_users() {
-            $.ajax({
-                cache: false,
-                url: '@Url.Action("_UserList","User")'
-            });
-        }
-        function confirm_delete(id) {
-            let result = confirm("Are you sure want to delete this account?");
-            if (result) {
-                delete_account(id);
-            }
-        }
-
-        function delete_account(id) {
-            $.ajax({
-                cache: false,
-                url: '@Url.Action("Delete","User")',
-                data: {
-                    id: id
-                },
-                success: function (response) {
-                    if (response == 1) {
-                        alert("Account Deleted!");
-
-                    }
-                    else {
-                        alert("Wrong Credentials");
-                    }
-                },
-                complete: function () {
-                    get_users();
-                }
-            });
-        }
-     
 
     </script>
 }

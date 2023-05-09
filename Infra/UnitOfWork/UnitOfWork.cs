@@ -14,6 +14,8 @@ namespace Infra.UnitOfWork
         private IRepository<tbUser>? _userRepo;
         private IRepository<tbBook>? _bookRepo;
         private IRepository<tbCategory>? _categoryRepo;
+        private IRepository<tbOrder>? _orderRepo;
+        private IRepository<tbOrderDetail>? _orderDetailRepo;
 
         private ApplicationDbContext _ctx;
         private bool m_IsDisposed;
@@ -75,6 +77,28 @@ namespace Infra.UnitOfWork
                     _categoryRepo = new Repository<tbCategory>(_ctx);
                 }
                 return _categoryRepo;
+            }
+        }
+        public IRepository<tbOrder> orderRepo
+        {
+            get
+            {
+                if(_orderRepo == null)
+                {
+                    _orderRepo = new Repository<tbOrder>(_ctx);
+                }
+                return _orderRepo;
+            }
+        }
+        public IRepository<tbOrderDetail> orderDetailRepo
+        {
+            get
+            {
+                if (_orderDetailRepo == null)
+                {
+                    _orderDetailRepo = new Repository<tbOrderDetail>(_ctx);
+                }
+                return _orderDetailRepo;
             }
         }
     }

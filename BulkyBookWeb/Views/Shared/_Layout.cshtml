@@ -55,13 +55,21 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="_EditView" asp-route-id="@_id">Edit Profile</a>
                                 </li>
+                       
                                 if (_role == "User")
                                 {
                                     <li class="nav-item">
                                         <a class="nav-link text-dark" asp-area="" asp-controller="Book" asp-action="Index">View Books</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="UserOrderView" asp-route-id="@_id">View Orders</a>
+                                    </li>
+                                    <li class="nav-item ms-auto">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="Index"> <i class="fa-solid fa-cart-shopping me-2"></i></a>          
+                                    </li>
+
                                 }
-                                <li class="nav-item ms-auto">
+                                <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Logout">Log Out</a>
                                 </li>
                             }
@@ -91,14 +99,13 @@
                 <nav id="sidebarMenu" class="col-md-3 col-lg-2 collapse d-lg-block sidebar collapse bg-white">
                     <div class="position-sticky">
                         <div class="list-group list-group-flush mx-3 mt-2">
-                            <a href="#"
-                               class="list-group-item list-group-item-action py-2 ripple"
-                               aria-current="true"><span>Dashboard</span>
-                            </a>
+                                <a class="list-group-item list-group-item-action py-2 ripple" asp-controller="Home" asp-action="Dashboard">
+                                    <span>Dashboard</span>
+                                </a>
                             <a class="list-group-item list-group-item-action py-2 ripple" asp-controller="Book" asp-action="Index"><span>Books</span>
                             </a>
                             <a class="list-group-item list-group-item-action py-2 ripple" asp-controller="Category" asp-action="Index"><span>Category</span></a>
-                                <a class="list-group-item list-group-item-action py-2 ripple" asp-controller="User" asp-action="_UserList"><span>User Accounts</span></a>
+                                <a class="list-group-item list-group-item-action py-2 ripple" asp-controller="User" asp-action="UserView"><span>User Accounts</span></a>
                            
                         </div>
                     </div>

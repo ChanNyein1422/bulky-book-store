@@ -2,22 +2,24 @@
 @{
     var result = User.Identity.IsAuthenticated.ToString();
     var _role = "Login";
+    var _userid = 0;
     if (result == "True")
     {     
         _role = User.Claims.ToArray()[BulkyBookWeb.AuthServices.Auth.AuthDataIndex.Role].Value;
+        _userid = Convert.ToInt32(User.Claims.ToArray()[BulkyBookWeb.AuthServices.Auth.AuthDataIndex.Id].Value);
     }
 
 }
 
 @if(Model.Count() > 0){
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
         @foreach (var item in Model)
         {
-            <div class="col">
+            <div class="col" id="book_@item.Id">
                 <div class="card">
                     @if (_role == "Admin")
                     {
-                        <img src="@item.ThumbnailUrl" class="card-img-top" style="max-height: 200px;" alt="Document Thumbnail">
+                        <img src="@item.ThumbnailUrl" class="card-img-top" style="height: 250px;" alt="Document Thumbnail">
                     }
                     else
                     {
@@ -34,23 +36,32 @@
                          
                             <p class="fw-bold pt-3">@item.Price MMK</p>
                           
-                            @if (item.BookUpload != null)
-                            {
-                              <a class="btn btn-light border-dark" href="@item.BookUploadUrl" target="_blank">Download Now</a>
 
-                            }
-                            @if (_role == "Admin")
-                            {
-                                <a class="btn btn-danger" onclick="delete_book(@item.Id)">
-                                    <i class="fa fa-trash" aria-hidden="true"></i>
-                                </a>
-                            }
-                            else
-                            {
-                                <a class="btn btn-success ms-2" href="#">
-                                    <i class="fa-solid fa-cart-shopping me-2"></i>Add to Cart
-                                </a>
-                            }
+                            <div class="d-flex">
+                                @if (item.BookUpload != null)
+                                {
+                                    <div class="mr-2">
+                                        <a class="btn btn-light border-dark" href="@item.BookUploadUrl" target="_blank">Download Now</a>
+
+                                    </div>
+
+                                }
+                                @if (_role == "Admin")
+                                {
+                                    <a class="btn btn-danger ms-2" onclick="delete_book(@item.Id)">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <div id="shop_@item.Id">
+                                        <a class="btn btn-success ms-2" onclick="add_to_cart('@item.Id', '@item.Title', '@item.Price')">
+                                            <i class="fa-solid fa-cart-shopping me-2"></i>
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                          
                         </div>
                     </div>
                 </div>

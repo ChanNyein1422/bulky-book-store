@@ -1,16 +1,34 @@
-﻿<h3>Explore Our Books</h3>
+﻿@{
+    var result = User.Identity.IsAuthenticated.ToString();
+    var _userid = 0;
+    var _role = "User";
+    if (result == "True")
+    {
+        _userid = Convert.ToInt32(User.Claims.ToArray()[BulkyBookWeb.AuthServices.Auth.AuthDataIndex.Id].Value);
+        _role = User.Claims.ToArray()[BulkyBookWeb.AuthServices.Auth.AuthDataIndex.Role].Value;
+    }
+}
+<h3>Explore Our Books</h3>
 <div class="ms-2">
-    <button type="button" class="btn btn-light border-dark my-3" onclick="load_addform()">
-        + Upload Book
-    </button>
+    @if (_role == "Admin")
+    {
+        <button type="button" class="btn btn-light border-dark my-3" onclick="load_addform()">
+            + Upload Book
+        </button>
 
-    <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div id="formholder"></div>
+        <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div id="formholder"></div>
+                </div>
+
             </div>
-
         </div>
+    }
+
+    <div id="loading">
+        <div class="spinner-border" role="status"></div>
+        <span class="h3 ms-3"> Loading Books. Please Wait....</span>
     </div>
     <div id="bookView">
 
@@ -21,9 +39,10 @@
 @section scripts{
     <script>
         "use strict";
-
+        var shoppingCart = [];
         $(function () {
             get_book();
+           
         });
 
         function get_book() {
@@ -31,7 +50,10 @@
                 cache: false,
                 url: '@Url.Action("_BookList","Book")',
                 success: function (result) {
+                    $("#loading").empty();
                     $("#bookView").empty().append(result);
+
+                    loaddisplayselected();
                 }
             });
         }
@@ -183,6 +205,49 @@
 
         function hidemodal(div) {
             $(div).modal('hide');
+        }
+
+        function add_to_cart(bookid, bookname, price){
+
+            var remove_button = `<a class="btn btn-danger ms-2" onclick="remove_from_cart('${bookid}', '${bookname}', '${price}')">Remove</a>`;
+            var obj = {
+                "bookid": bookid,
+                "bookname": bookname,
+                "price": price
+            };
+
+            shoppingCart.push(obj);
+            localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
+            $("#shop_"+bookid).empty().append(remove_button);
+
+        }
+        function remove_from_cart(bookid, bookname, price){
+
+            var add_button = `<a class="btn btn-success ms-2" onclick="add_to_cart('${bookid}', '${bookname}', '${price}')">
+                                                    <i class="fa-solid fa-cart-shopping me-2"></i>
+                                                </a>`;
+            var localDatas = localStorage.getItem("shoppingCart");
+            shoppingCart = JSON.parse(localDatas);
+
+            shoppingCart = shoppingCart.filter(function (el) { return el.bookid != bookid; });
+            localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
+            $("#shop_" + bookid).empty().append(add_button);
+
+        }
+
+
+        function loaddisplayselected(){
+            var localDatas = localStorage.getItem("shoppingCart");
+            if(localDatas != null){
+                shoppingCart = JSON.parse(localDatas);
+                if (shoppingCart.length > 0) {
+                    for (var i in shoppingCart) {
+                        var remove_button = `<a class="btn btn-danger ms-2" onclick="remove_from_cart('${shoppingCart[i].bookid}', '${shoppingCart[i].bookname} ', '${shoppingCart[i].price} ')">Remove</a>`;
+                        $('#shop_' + shoppingCart[i].bookid).empty().append(remove_button)
+                    }
+                }
+            }
+         
         }
 
     </script>

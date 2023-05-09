@@ -1,0 +1,49 @@
+﻿<p class="h3 fw-bold">User Accounts</p>
+<div id="userListView"></div>
+
+@section scripts{
+    <script>
+        "use strict";
+        $(function () {
+            get_users();
+        })
+
+        function get_users() {
+            $.ajax({
+                cache: false,
+                url: '@Url.Action("_UserList","User")',
+                success: function (result) {
+                    $("#userListView").empty().append(result);
+                }
+            });
+        }
+        function confirm_delete(id) {
+            let result = confirm("Are you sure want to delete this account?");
+            if (result) {
+                delete_account(id);
+            }
+        }
+
+        function delete_account(id) {
+            $.ajax({
+                cache: false,
+                url: '@Url.Action("Delete","User")',
+                data: {
+                    id: id
+                },
+                success: function (response) {
+                    if (response == 1) {
+                        alert("Account Deleted!");
+                    }
+                    else {
+                        alert("Wrong Credentials");
+                    }
+                },
+                complete: function () {
+                    location.reload();
+                }
+            });
+        }
+
+    </script>
+}

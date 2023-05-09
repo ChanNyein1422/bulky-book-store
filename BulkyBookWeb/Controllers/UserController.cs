@@ -21,12 +21,16 @@ namespace BulkyBookWeb.Controllers
         }
         public IActionResult _RegisterView()
         {
-            return PartialView();
+            return View();
         }
         public async Task<IActionResult> _EditView(int id)
         {
             var userdata = await _iuser.GetUserByID(id);
             return View(userdata);
+        }
+        public IActionResult UserView()
+        {
+            return View();
         }
         public async Task<IActionResult> _UserList()
         {

@@ -1,5 +1,7 @@
 using BulkyBookAPI.Services.Book;
 using BulkyBookAPI.Services.Category;
+using BulkyBookAPI.Services.Order;
+using BulkyBookAPI.Services.OrderDetail;
 using BulkyBookAPI.Services.User;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +35,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 builder.Services.AddScoped<IUser>(s => new UserBase(s.GetService<ApplicationDbContext>()));
 builder.Services.AddScoped<IBook>(s => new BookBase(s.GetService<ApplicationDbContext>()));
 builder.Services.AddScoped<ICategory>(s => new CategoryBase(s.GetService<ApplicationDbContext>()));
+builder.Services.AddScoped<IOrder>(s => new OrderBase(s.GetService<ApplicationDbContext>()));
+builder.Services.AddScoped<IOrderDetail>(s => new OrderDetailBase(s.GetService<ApplicationDbContext>()));
+
 
 var app = builder.Build();
 

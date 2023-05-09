@@ -18,7 +18,7 @@ namespace Data.Models
         public string? Author { get; set; }
         public string? Publisher { get; set; }
         public string? PublishDate { get; set; }
-        public int? Price { get; set; } = 0;
+        public decimal? Price { get; set; } = 0;
         public DateTime? UploadedDate { get; set; } = DateTime.Now;
         public string? BookUpload { get; set; }
 

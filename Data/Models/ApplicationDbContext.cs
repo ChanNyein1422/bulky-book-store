@@ -14,5 +14,7 @@ namespace Data.Models
         public virtual DbSet<tbUser> Users { get; set; }
         public virtual DbSet<tbBook> Books { get; set; }
         public virtual DbSet<tbCategory> Categories { get; set; }
+        public virtual DbSet<tbOrder> Orders { get; set; }
+        public virtual DbSet<tbOrderDetail> OrderDetails { get; set; }
     }
 }

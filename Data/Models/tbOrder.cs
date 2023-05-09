@@ -12,10 +12,12 @@ namespace Data.Models
     public class tbOrder
     {
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
         public int UserId { get; set; }
-        public string? OrderDetails { get; set; }
-        public DateTime? OrderedTime { get; set; }
+        public string OrderCode { get; set; }
+        public decimal? TotalAmount { get; set; } = 0;
+        public int? TotalBooks { get; set; } = 0;
+        public DateTime? OrderedTime { get; set; } = DateTime.Now;
 
     }
 }

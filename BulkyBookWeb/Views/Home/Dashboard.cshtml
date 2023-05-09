@@ -1,0 +1,36 @@
+﻿@{
+    var result = User.Identity.IsAuthenticated.ToString();
+    var _name = "Admin";
+    if (result == "True")
+    {
+        _name = User.Claims.ToArray()[BulkyBookWeb.AuthServices.Auth.AuthDataIndex.Name].Value;
+    }
+
+}
+<p class="h3 fw-bold">Dashboard</p>
+<p class="h4"> Welcome, @_name!</p>
+
+<div class="row">
+    <div class="col-sm-6 w-50 text-center">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Users</h5>
+                <p class="card-text">12</p>
+                <a class="btn btn-primary" asp-controller="User" asp-action="UserView">View Details</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 w-50 text-center">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Books Uploaded</h5>
+                <p class="card-text">23</p>
+                <a class="btn btn-primary" asp-controller="Book" asp-action="Index">View Details</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p class="h4 mt-3"> User Order View</p>
+<p>No Order Here Yet.</p>
+<div id="OrderView"></div>
