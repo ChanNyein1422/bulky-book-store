@@ -17,10 +17,10 @@ namespace Infra.Helper.OrderApiRequest
             return data;
         }
 
-        public async Task<List<tbOrder>> GetAllOrders()
+        public async Task<List<UserOrderViewModel>> GetAllOrders()
         {
             var url = $"api/order/getallorders";
-            var data = await ApiRequest<List<tbOrder>>.GetRequest(url.route(Request.bulkybookapi));
+            var data = await ApiRequest<List<UserOrderViewModel>>.GetRequest(url.route(Request.bulkybookapi));
             return data;
         }
 
@@ -38,10 +38,10 @@ namespace Infra.Helper.OrderApiRequest
             return data;
         }
 
-        public async Task<List<tbOrderDetail>> GetOrderDetails(string id)
+        public async Task<List<BookOrderDetailViewModel>> GetOrderDetails(string id)
         {
             var url = $"api/order/getorderdetails?id={id}";
-            var data = await ApiRequest<List<tbOrderDetail>>.GetRequest(url.route(Request.bulkybookapi));
+            var data = await ApiRequest<List<BookOrderDetailViewModel>>.GetRequest(url.route(Request.bulkybookapi));
             return data;
         }
 

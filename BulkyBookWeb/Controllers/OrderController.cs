@@ -23,6 +23,22 @@ namespace BulkyBookWeb.Controllers
             var data = await this._iorder.GetOrderByUser(userId);
             return View(data);
         }
+        public async Task<IActionResult> _AdminOrderView()
+        {
+            var data = await this._iorder.GetAllOrders();
+            return PartialView(data);
+        }
+        public async Task<IActionResult> _AdminDetailView(string id)
+        {
+            var data = await this._iorder.GetOrderDetails(id);
+            return PartialView(data);
+        }
+
+        public async Task<IActionResult> _OrderDetailView(string id)
+        {
+            var data = await this._iorder.GetOrderDetails(id);
+            return PartialView(data);
+        }
         [HttpPost]
         public async Task<IActionResult> UpSertList(List<OrderViewModel> orders)
         {

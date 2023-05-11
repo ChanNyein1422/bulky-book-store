@@ -13,7 +13,8 @@ namespace Infra.Helper.UserApiRequest
         Task<tbUser> UpSert(tbUser user);
         Task<tbUser> GetUserByID(int id);
         Task<int> Delete(int id);
-        Task<List<tbUser>> GetAllUsers();
+        Task<PagedListClient<tbUser>> GetAllUsers(int? page = 1, int? pageSize = 10, string? sortVal = "Id", string? sortDir = "asc",
+                         string? q = "");
         Task<tbUser> Login(string email, string password);
     }
 }

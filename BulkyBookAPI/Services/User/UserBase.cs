@@ -1,7 +1,9 @@
 ﻿using Core.Extensions;
 using Data.Models;
 using Infra.Helper;
+using Infra.Services;
 using Infra.UnitOfWork;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -17,14 +19,28 @@ namespace BulkyBookAPI.Services.User
             _context = context;
             this._unitOfWork = new UnitOfWork(_context);
         }
-        public List<tbUser> GetAllUsers()
+        public async Task<Model<tbUser>> GetAllUsers(int? page = 1, int? pageSize = 10, string? sortVal = "Id", string? sortDir = "asc", string? q = "")
         {
-            return _unitOfWork.userRepo.GetAll().ToList();
+            Expression<Func<tbUser, bool>> basicFilter = null;
+            Expression<Func<tbUser, bool>> emailFilter = null;
+            IQueryable<tbUser> query = _unitOfWork.userRepo.GetAll().AsQueryable();
+            if (!String.IsNullOrEmpty(q))
+            {
+                basicFilter = PredicateBuilder.New<tbUser>();
+                basicFilter = basicFilter.Or(a => a.Name.Contains(q));
+                basicFilter = basicFilter.Or(a => a.Email.Contains(q));
+                query = query.Where(basicFilter);
+            }
+            query = SORTLIT<tbUser>.Sort(query, sortVal,sortDir);
+            var result = await PagingService<tbUser>.getPaging(page ?? 1, pageSize ?? 10, query);
+
+            return result;
         }
 
         public tbUser GetUserById(int id)
         {
             return _unitOfWork.userRepo.GetById(id);
+
         }
 
         public async Task<tbUser> LoginUser(string email, string password)
@@ -39,6 +55,7 @@ namespace BulkyBookAPI.Services.User
             {
                 var checkEmail = _unitOfWork.userRepo.GetAll().Any(u => u.Email == user.Email && u.Id != user.Id);
                 var checkUsername = _unitOfWork.userRepo.GetAll().Any(u => u.Name == user.Name && u.Id != user.Id);
+
 
 
                   

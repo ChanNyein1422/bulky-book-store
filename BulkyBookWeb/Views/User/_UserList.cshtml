@@ -1,4 +1,10 @@
-﻿@model List<Data.Models.tbUser>
+﻿@using Infra.Services;
+@using Data.Models;
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+@using X.PagedList.Web.Common;
+@model PagedListClient<tbUser>;
+
 @{
     var result = User.Identity.IsAuthenticated.ToString();
     var _id = 0;
@@ -17,11 +23,10 @@
             <th>Actions</th>
         </tr>
     </thead>
-
         <tbody>
-        @if (Model.Count() > 0)
+        @if (Model.TotalCount > 0)
         {
-            @foreach (var item in Model)
+            @foreach (var item in Model.Results)
             {
                 @if (item.Id != _id)
                 {
@@ -49,7 +54,11 @@
         }
         else
         {
-            <p class="h4">No User Data Here Yet. </p>
+            <p class="h4">No User Data. </p>
         }
         </tbody>
 </table>
+<div class="pagedList" style="text-align : center; display: inline">
+    @Html.PagedListPager(Model.Results, page => Url.Action("_UserList", "User",
+    new { page }), PagedListRenderOptions.ClassicPlusFirstAndLast)
+</div>

@@ -31,6 +31,91 @@
     </div>
 </div>
 
-<p class="h4 mt-3"> User Order View</p>
-<p>No Order Here Yet.</p>
+<p class="h4 mt-3"> User Orders</p>
+
+<div id="loading">
+    <div class="spinner-border" role="status"></div>
+    <span class="h3 ms-3"> Loading Orders. Please Wait....</span>
+</div>
 <div id="OrderView"></div>
+
+<div class="modal fade" id="viewOrderDetail" tabindex="-1" aria-labelledby="viewOrderDetailLabel" aria-hidden="true">
+    <div class="modal-dialog">
+    
+            <div id="formholder"></div>
+     
+
+    </div>
+</div>
+@section scripts{
+    <script>
+
+        $(function () {
+            getOrders();
+        });
+        function getOrders() {
+            $.ajax({
+                cache: false,
+                url: '@Url.Action("_AdminOrderView","Order")',
+                beforeSend: function () {
+
+                },
+                success: function (response) {
+                    $('#loading').empty();
+                    $('#OrderView').empty().append(response);
+                },
+                complete: function () {
+
+                }
+            });
+        }
+        //function view_order_detail(orderid) {
+        //    $.ajax({
+        //        cache: false,
+        //        url: '@Url.Action("_AdminDetailView","Order")',
+        //        data: { id: orderid },
+        //        beforesend: function () {
+
+        //        },
+        //        success: function (response) {
+        //            $('#order_detail_' + orderid).toggle();
+
+        //            $('#order_detail_' + orderid).empty().append(response);
+        //        },
+        //        complete: function () {
+
+        //        }
+        //    });
+        // }
+
+        function load_detail_form(id) {
+            console.log(id);
+            popup_modalform(id, '#viewOrderDetail', '#formholder', '@Url.Action("_AdminDetailView","Order")');
+        }
+
+        function popup_modalform(id, modal, formholder, url) {
+            $.ajax({
+                cache: false,
+                url: url,
+                data: { id: id },
+                beforeSend: function () {
+                    showmodal(modal);
+                },
+                success: function (result) {
+                    $(formholder).empty().append(result);        
+                },
+                complete: function () {
+                }
+            });
+        }
+      
+
+        function showmodal(div) {
+            $(div).modal('show');
+        }
+
+        function hidemodal() {
+            $('#viewOrderDetail').modal('hide');
+        }
+    </script>
+}

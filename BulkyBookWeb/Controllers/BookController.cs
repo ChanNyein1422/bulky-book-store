@@ -17,9 +17,9 @@ namespace BulkyBookWeb.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> _BookList()
+        public async Task<IActionResult> _BookList(int? page = 1, int? pageSize = 5, string? sortVal = "Id", string? sortDir = "asc", string? q = "", string? category = "")
         {
-            var data = await this._ibook.GetAllBooks();
+            var data = await this._ibook.GetAllBooks(page, pageSize, sortVal, sortDir, q, category);
             return PartialView(data);
         }
         public IActionResult _AddBook()

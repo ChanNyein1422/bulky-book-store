@@ -32,9 +32,9 @@ namespace BulkyBookWeb.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> _UserList()
+        public async Task<IActionResult> _UserList(int? page = 1, int? pageSize = 5, string? sortVal = "Id", string? sortDir = "asc", string? q = "")
         {
-            var userdata = await _iuser.GetAllUsers();
+            var userdata = await _iuser.GetAllUsers(page, pageSize, sortVal, sortDir, q);
             return PartialView(userdata);
         }
         [HttpPost]

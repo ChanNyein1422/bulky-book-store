@@ -22,6 +22,14 @@ namespace Infra.Helper.CategoryApiRequest
             var data = await ApiRequest<List<tbCategory>>.GetRequest(url.route(Request.bulkybookapi));
             return data;
         }
+
+        public async Task<tbCategory> GetCategoryById(int id)
+        {
+            var url = $"api/category/getcategorybyid?id={id}";
+            var data = await ApiRequest<tbCategory>.GetRequest(url.route(Request.bulkybookapi));
+            return data;
+        }
+
         public async Task<tbCategory> UpSert(tbCategory category)
         {
             var url = $"api/category/upsert";

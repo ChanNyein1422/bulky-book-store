@@ -14,8 +14,12 @@
         {
             <tr id="@category.Id">
                 <th scope="row">@category.Id</th>
-                <td>@category.Category</td>
-                <td><a class="btn btn-danger" onclick="delete_category(@category.Id)">Delete</a></td>
+                <td id="category_@category.Id">@category.Category</td>
+                <td>
+
+                        <a class="btn btn-info" onclick="load_editform(@category.Id)">Edit</a>
+                    <a class="btn btn-danger" onclick="delete_category(@category.Id)">Delete</a>
+                </td>
             </tr>
         }
     </tbody>

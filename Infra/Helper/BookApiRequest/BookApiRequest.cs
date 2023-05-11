@@ -1,4 +1,5 @@
 ﻿using Data.Models;
+using Infra.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,13 +17,16 @@ namespace Infra.Helper.BookApiRequest
             return data;
         }
 
-        public async Task<List<tbBook>> GetAllBooks()
+        public async Task<PagedListClient<tbBook>> GetAllBooks(int? page = 1, int? pageSize = 10, string? sortVal = "Id", string? sortDir = "asc",
+                string? q = "", string? category = "")
         {
-            string url = $"api/book/getallbooks";
-            var data = await ApiRequest<List<tbBook>>.GetRequest(url.route(Request.bulkybookapi));
-            return data;
-        }
+            string url = $"api/book/getallbooks?page={page}&pageSize={pageSize}&sortVal={sortVal}&sortDir={sortDir}&q={q}&category={category}";
+            var data = await ApiRequest<Model<tbBook>>.GetRequest(url.route(Request.bulkybookapi));
+            //var data = await GetRequest<Model<tbUser>>(url.route(Request.firstapi));
+            PagedListClient<tbBook> model = PagingService<tbBook>.Convert(page ?? 1, pageSize ?? 10, data);
 
+            return model;
+        }
         public async Task<tbBook> GetBookById(int id)
         {
             string url = $"api/book/getbookbyid?={id}";

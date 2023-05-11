@@ -16,15 +16,28 @@ namespace BulkyBookWeb.Controllers
         {
             return View();
         }
-        public IActionResult _AddCategory()
+        public async Task<IActionResult> _AddCategory(int id)
         {
             tbCategory category = new tbCategory();
-            return PartialView(category);
+            if (id == 0)
+            {
+                return PartialView(category);
+            }
+            else
+            {
+                category = await _icategory.GetCategoryById(id);
+                return PartialView(category);
+            }
         }
         public async Task<IActionResult> _CategoryView()
         {
             var data = await this._icategory.GetAll();
             return PartialView(data);
+        }
+        public async Task<IActionResult> _CategoryFilterView()
+        {
+            var data = await this._icategory.GetAll();
+            return PartialView(data);  
         }
         public async Task<IActionResult> CategoryList()
         {

@@ -16,17 +16,18 @@
 
         $(function(){
             load_OrderDetails();
-        })
+        });
     
 
         function load_OrderDetails(){
             var localDatas = localStorage.getItem("shoppingCart");
             var totalPrice = 0;
             shoppingCart = JSON.parse(localDatas);
-            var cartLength = shoppingCart.length;
+           
             console.log(shoppingCart);
             var elements = "";
-            if(cartLength > 0){
+            if(shoppingCart != null){
+                var cartLength = shoppingCart.length;
                 elements += `<table class="table">
             <thead class="thead-dark">
                 <tr>
@@ -99,16 +100,20 @@
                     },
                     success: function (myData) {
                         if(myData != null){
-                        alert("Success");
+                        alert("Order Added");
                         }
-                        console.log(myData);
                     },
                     complete: function () {
-                        load_OrderDetails();
+                        localStorage.removeItem("shoppingCart");
+                        window.location="../Book/Index";
+                       
                     }
                 });
            
             }
         }
+
+       
+
     </script>
 }

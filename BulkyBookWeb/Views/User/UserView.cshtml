@@ -1,22 +1,72 @@
 ﻿<p class="h3 fw-bold">User Accounts</p>
+
+<div id="loading">
+    <div class="spinner-border" role="status"></div>
+    <span class="h3 ms-3"> Loading Books. Please Wait....</span>
+</div>
+<div class="d-flex flex-row">
+    <input type="text" placeholder="Search For Users" id="txt_search" class="form-control my-auto me-5" style="height:40px;" name="search_by_username" />
+    <button class="my-3 btn btn-light border rounded border-dark me-5" type="submit" onclick="search()"> <i class="fas fa-search"></i> </button>
+</div>
+
+
 <div id="userListView"></div>
 
 @section scripts{
     <script>
         "use strict";
+       
+        var page = 1,
+        pageSize = 5,
+        sortVal = "Id",
+        sortDir = "asc",
+        q = "";
+
         $(function () {
             get_users();
+            initPaging("#userListView", get_users);
         })
 
         function get_users() {
             $.ajax({
                 cache: false,
                 url: '@Url.Action("_UserList","User")',
+                data: {
+                    page: page,
+                    pageSize: pageSize,
+                    sortVal: sortVal,
+                    sortDir: sortDir,
+                    q: q
+                },
                 success: function (result) {
+                    $("#loading").empty();
                     $("#userListView").empty().append(result);
                 }
             });
         }
+        function initPaging(div, callback) {
+            $(div).on("click", ".pagedList a", function (e) {
+                e.preventDefault();
+                var $a = $(this).attr("href");
+                try {
+                    var pageurl = $a.split(/=/);
+                    page = pageurl[1];
+                    if (page == null) {
+                        page = 1;
+                    }
+                }
+                catch (e) {
+                    page = 1;
+                }
+                callback();
+            });
+        }
+        function search() {
+            q = $('#txt_search').val();
+            page = 1;
+            get_users();
+        }
+
         function confirm_delete(id) {
             let result = confirm("Are you sure want to delete this account?");
             if (result) {

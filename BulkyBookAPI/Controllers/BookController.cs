@@ -15,9 +15,10 @@ namespace BulkyBookAPI.Controllers
         }
 
         [HttpGet("api/book/getallbooks")]
-        public async Task<IActionResult> GetBooks()
+        public async Task<IActionResult> GetBooks(int? page = 1, int? pageSize = 10, string? sortVal = "Id", string? sortDir = "asc",
+                                string? q = "", string? category = "")
         {
-            var result = await this._ibook.GetAllBooks();
+            var result = await this._ibook.GetAllBooks(page, pageSize, sortVal, sortDir, q, category);
             return Ok(result);
         }
 

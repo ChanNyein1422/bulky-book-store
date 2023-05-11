@@ -1,6 +1,7 @@
 ﻿using BulkyBookAPI.Services.OrderDetail;
 using Data.Models;
 using Data.ViewModel;
+using Infra.Services;
 using Infra.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,15 +36,33 @@ namespace BulkyBookAPI.Services.Order
             return 0;
         }
 
-        public async Task<List<tbOrder>> GetAllOrders()
+        public async Task<List<UserOrderViewModel>> GetAllOrders()
         {
-            var result = await _unitOfWork.orderRepo.GetAll().ToListAsync();
-            return result;
+            IQueryable<UserOrderViewModel> result = from o in _unitOfWork.orderRepo.GetAll()
+                                                    join u in _unitOfWork.userRepo.GetAll()
+                                                    on o.UserId equals u.Id
+
+                                                    select new UserOrderViewModel
+                                                    { 
+                                                        order = o,
+                                                        user = u
+                                                    };
+            var data = await result.OrderBy(a => a.order.Id).ToListAsync();
+            return data;
         }
-        public async Task<List<tbOrderDetail>> GetOrderDetails(string id)
+        public async Task<List<BookOrderDetailViewModel>> GetOrderDetails(string id)
         {
-            var result = await _unitOfWork.orderDetailRepo.GetAll().Where(x => x.OrderId == id).ToListAsync();
-            return result;
+            IQueryable<BookOrderDetailViewModel> result = from b in _unitOfWork.bookRepo.GetAll()
+                                                          join od in _unitOfWork.orderDetailRepo.GetAll().Where(x => x.OrderId == id)
+                                                          on b.Id equals od.BookId
+
+                                                          select new BookOrderDetailViewModel
+                                                          {
+                                                              book = b,
+                                                              orderDetail = od
+                                                          };
+            var data = await result.OrderBy(a => a.orderDetail.Id).ToListAsync();
+            return data;
         }
         
         public async Task<tbOrder> GetOrderById(string id)
@@ -53,7 +72,7 @@ namespace BulkyBookAPI.Services.Order
         }
         public async Task<List<tbOrder>> GetOrderByUser(int userId)
         {
-           var result = await _unitOfWork.orderRepo.GetAll().Where(x => x.UserId == userId).ToListAsync();
+            var result = await _unitOfWork.orderRepo.GetAll().Where(x => x.UserId == userId).ToListAsync();
             return result;
         }
 

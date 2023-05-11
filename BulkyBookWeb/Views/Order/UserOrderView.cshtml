@@ -1,17 +1,56 @@
 ﻿@model List<Data.Models.tbOrder>
 
 <div class="text-center">
-    <p>Your Orders</p>
+   
     @if(Model.Count() > 0)
     {
+        <p class="h3 mt-2">Your Orders</p>
         @foreach(var item in Model)
         {
-            <ul class="mb-3">
-                <li>Order Code: @item.OrderCode</li>
-                <li>Total Books: @item.TotalBooks</li>
-                <li>Price Amount: @item.TotalAmount</li>
-            </ul>
+            <div class="card mb-3" id="@item.Id">
+                <div class="card-body">
+                    <p>Order Code: @item.OrderCode</p>
+                    <p>Total Books: @item.TotalBooks</p>
+                    <p>Price Amount: @item.TotalAmount </p>
+                    <a class="btn btn-success ms-auto" onclick="view_order_detail('@item.Id')">Check Details</a>
+                </div>
+            </div>
+            <div class="text-center mb-2" id="order_detail_@item.Id" style="display:none">
+                
+            </div>
         }
+
+    }
+    else
+    {
+        <p class="h3 mt-5">You haven't make orders yet.</p>
+        <a class="btn btn-light border rounded border-dark mt-2" asp-area="" asp-controller="Book" asp-action="Index">Check Out Books Here.</a>
+
     }
 </div>
 
+@section scripts{
+    <script>
+
+        $(function () {
+            
+        });
+         function view_order_detail(orderid) {
+                $.ajax({
+                    cache: false,
+                    url: '@Url.Action("_OrderDetailView","Order")',
+                data: { id : orderid },
+                beforeSend: function () {
+
+                },
+                success: function (response) {
+                    $('#order_detail_' + orderid).toggle();
+                    $('#order_detail_' + orderid).empty().append(response);
+                },
+                complete: function () {
+                   
+                }
+            });
+        }
+    </script>
+}

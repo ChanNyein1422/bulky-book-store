@@ -12,5 +12,7 @@ namespace Infra.Helper.CategoryApiRequest
         Task<tbCategory> UpSert(tbCategory category);
         Task<int> Delete(int id);
         Task<List<tbCategory>> GetAll();
+
+        Task<tbCategory> GetCategoryById(int id);
     }
 }

@@ -51,16 +51,19 @@
         }
 
         function load_addform() {
-
-            popup_modalform('#addCategoryModal', '#formholder', '@Url.Action("_AddCategory","Category")', form_submit);
+            popup_modalform(0, '#addCategoryModal', '#formholder', '@Url.Action("_AddCategory","Category")', form_submit);
+        }
+        function load_editform(id) {
+            popup_modalform(id, '#addCategoryModal', '#formholder', '@Url.Action("_AddCategory","Category")', form_submit);
         }
 
-        function popup_modalform(modal, formholder, url, callback) {
+        function popup_modalform(id, modal, formholder, url, callback) {
             $.ajax({
                 cache: false,
                 url: url,
+                data: { id : id },
                 beforeSend: function () {
-                    showmodal(modal)
+                    showmodal(modal);
                 },
                 success: function (result) {
                     $(formholder).empty().append(result);
@@ -83,7 +86,7 @@
                         $('.btn').prop("disabled", true);
                     },
                     success: function (myData) {
-                        alert("Category Added");
+                        alert("Success");
 
                     },
                     complete: function () {
@@ -104,5 +107,7 @@
             $(div).modal('hide');
         }
 
+
+      
     </script>
 }

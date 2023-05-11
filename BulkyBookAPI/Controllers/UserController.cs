@@ -15,10 +15,11 @@ namespace BulkyBookAPI.Controllers
         }
 
         [HttpGet("api/user/getallusers")]
-        public IActionResult GetAllUsers()
+        public async Task<IActionResult> GetAllUsers(int? page = 1, int? pageSize = 10, string? sortVal = "Id", string? sortDir = "asc",
+                                string? q = "")
         {
-            var user = this._iUser.GetAllUsers();
-            return Ok(user);
+            var data = await this._iUser.GetAllUsers(page, pageSize, sortVal, sortDir, q);
+            return Ok(data);
         }
 
         [HttpGet("api/user/getuserbyid")]

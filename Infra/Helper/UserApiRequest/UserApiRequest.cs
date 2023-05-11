@@ -11,13 +11,16 @@ namespace Infra.Helper.UserApiRequest
     public class UserApiRequest : IUserApiRequest
     {
 
-        public async Task<List<tbUser>> GetAllUsers()
+        public async Task<PagedListClient<tbUser>> GetAllUsers(int? page = 1, int? pageSize = 10, string? sortVal = "Id", string? sortDir = "asc",
+                        string? q = "")
         {
-            string url = $"api/user/getallusers";
-            var data = await ApiRequest<List<tbUser>>.GetRequest(url.route(Request.bulkybookapi));
-            return data;
+            string url = $"api/user/getallusers?page={page}&pageSize={pageSize}&sortVal={sortVal}&sortDir={sortDir}&q={q}";
+            var data = await ApiRequest<Model<tbUser>>.GetRequest(url.route(Request.bulkybookapi));
+            //var data = await GetRequest<Model<tbUser>>(url.route(Request.firstapi));
+            PagedListClient<tbUser> model = PagingService<tbUser>.Convert(page ?? 1, pageSize ?? 10, data);
+            
+            return model;
         }
-
         public async Task<tbUser> GetUserByID(int id)
         {
             string url = $"api/user/getuserbyid?id={id}";

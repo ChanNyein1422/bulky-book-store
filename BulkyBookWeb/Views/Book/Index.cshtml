@@ -30,6 +30,10 @@
         <div class="spinner-border" role="status"></div>
         <span class="h3 ms-3"> Loading Books. Please Wait....</span>
     </div>
+    <div class="d-flex flex-row">
+        <input type="text" placeholder="Search For Books" id="txt_search" class="form-control my-auto me-5" style="height:40px;" name="search_for_books" />
+        <button class="my-3 btn btn-light border rounded border-dark me-5" type="submit" onclick="search()"> <i class="fas fa-search"></i> </button>
+    </div>
     <div id="bookView">
 
     </div>
@@ -39,21 +43,78 @@
 @section scripts{
     <script>
         "use strict";
+                var page = 1,
+        pageSize = 5,
+        sortVal = "Id",
+        sortDir = "asc",
+        q = "",
+        category = "";
         var shoppingCart = [];
+
         $(function () {
             get_book();
-           
+            initPaging("#bookView", get_book);
+
+            get_category_filter();
         });
 
         function get_book() {
             $.ajax({
                 cache: false,
                 url: '@Url.Action("_BookList","Book")',
+                data: {
+                    page: page,
+                    pageSize: pageSize,
+                    sortVal: sortVal,
+                    sortDir: sortDir,
+                    q: q,
+                    category: category
+                },
                 success: function (result) {
                     $("#loading").empty();
                     $("#bookView").empty().append(result);
-
+                    total_order_count();
                     loaddisplayselected();
+                    get_category_filter();
+                }
+            });
+        }
+        function filter_category(cat_title){
+            q
+            category = cat_title;
+            page = 1;
+            get_book();
+        }
+          function search() {
+            q = $('#txt_search').val();
+            page = 1;
+            get_book();
+          //  $('#txt_search').val() = q;
+            
+        }
+          function initPaging(div, callback) {
+            $(div).on("click", ".pagedList a", function (e) {
+                e.preventDefault();
+                var $a = $(this).attr("href");
+                try {
+                    var pageurl = $a.split(/=/);
+                    page = pageurl[1];
+                    if (page == null) {
+                        page = 1;
+                    }
+                }
+                catch (e) {
+                    page = 1;
+                }
+                callback();
+            });
+        }
+        function get_category_filter(){
+            $.ajax({
+                cache: false,
+                url: '@Url.Action("_CategoryFilterView","Category")',
+                success: function (result) {
+                    $("#CategoryFilter").empty().append(result);
                 }
             });
         }
@@ -85,8 +146,9 @@
                 success: function(response){
                     $('#category_select').empty();
                     $('#category_select').append("<option value='0'>Select Category</option>");
+           
                     for(var i = 0; i < response.length; i++){
-                        $('#category_select').append(`<option value='${response[i].Id}'>${response[i].Category}</option>`);
+                        $('#category_select').append(`<option value='${response[i].Category}' id='${response[i].Id}'>${response[i].Category}</option>`);
 
                     }
                 }
@@ -219,8 +281,16 @@
             shoppingCart.push(obj);
             localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
             $("#shop_"+bookid).empty().append(remove_button);
-
+            total_order_count();
         }
+        function total_order_count(){
+            var localDatas = localStorage.getItem("shoppingCart");
+            if(localDatas != null){
+            shoppingCart = JSON.parse(localDatas);
+            $("#shopping_cart_icon").empty().append(shoppingCart.length);
+            }
+        }
+
         function remove_from_cart(bookid, bookname, price){
 
             var add_button = `<a class="btn btn-success ms-2" onclick="add_to_cart('${bookid}', '${bookname}', '${price}')">
@@ -232,7 +302,7 @@
             shoppingCart = shoppingCart.filter(function (el) { return el.bookid != bookid; });
             localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
             $("#shop_" + bookid).empty().append(add_button);
-
+            total_order_count();
         }
 
 

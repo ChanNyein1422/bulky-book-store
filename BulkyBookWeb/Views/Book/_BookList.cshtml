@@ -1,8 +1,14 @@
-﻿@model List<Data.Models.tbBook>
+﻿@using Infra.Services;
+@using Data.Models;
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+@using X.PagedList.Web.Common;
+@model PagedListClient<tbBook>;
 @{
     var result = User.Identity.IsAuthenticated.ToString();
     var _role = "Login";
     var _userid = 0;
+    var _col = "row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3";
     if (result == "True")
     {     
         _role = User.Claims.ToArray()[BulkyBookWeb.AuthServices.Auth.AuthDataIndex.Role].Value;
@@ -11,9 +17,16 @@
 
 }
 
-@if(Model.Count() > 0){
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-        @foreach (var item in Model)
+<div id="CategoryFilter"></div>
+
+@if(Model.TotalCount > 0){
+
+    @if(_role != "Admin")
+    {
+        _col = "row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3";
+    }
+    <div class="@_col">
+        @foreach (var item in Model.Results)
         {
             <div class="col" id="book_@item.Id">
                 <div class="card">
@@ -23,7 +36,7 @@
                     }
                     else
                     {
-                        <img src="@item.ThumbnailUrl" class="card-img-top" style="height: 250px;" alt="Document Thumbnail">
+                        <img src="@item.ThumbnailUrl" class="card-img-top" style="height: 230px;" alt="Document Thumbnail">
                     }
                   
                     <div class="card-body">
@@ -72,3 +85,7 @@
 else{
     <p class="h2">No books here yet.</p>
 }
+<div class="pagedList" style="text-align : center; display: inline">
+    @Html.PagedListPager(Model.Results, page => Url.Action("_BookList", "Book",
+    new { page }), PagedListRenderOptions.ClassicPlusFirstAndLast)
+</div>
