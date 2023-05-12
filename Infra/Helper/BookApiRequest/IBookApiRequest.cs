@@ -15,6 +15,7 @@ namespace Infra.Helper.BookApiRequest
         Task<int> DeleteBook(int id);
         Task<PagedListClient<tbBook>> GetAllBooks(int? page = 1, int? pageSize = 10, string? sortVal = "Id", string? sortDir = "asc",
                         string? q = "", string? category = "");
+        Task<List<string>> GetBooksTitles();
 
     }
 }

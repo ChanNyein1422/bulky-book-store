@@ -29,8 +29,8 @@ namespace BulkyBookAPI.Controllers
         }
 
         [HttpGet("api/book/deletebook")]
-        public IActionResult DeleteBook(int id) { 
-            var result = this._ibook.BookDelete(id);
+        public async Task<IActionResult> DeleteBook(int id) { 
+            var result = await _ibook.BookDelete(id);
             return Ok(result);
         }
 
@@ -39,5 +39,12 @@ namespace BulkyBookAPI.Controllers
             var result = await _ibook.UpSert(book);
             return Ok(result);
         }
+        [HttpGet("api/book/gettitlearray")]
+        public async Task<IActionResult> GetTitleArray()
+        {
+            var result = await _ibook.GetBooksTitles();
+            return Ok(result);
+        }
+
     }
 }

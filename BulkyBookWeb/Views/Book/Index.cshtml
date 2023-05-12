@@ -30,10 +30,12 @@
         <div class="spinner-border" role="status"></div>
         <span class="h3 ms-3"> Loading Books. Please Wait....</span>
     </div>
-    <div class="d-flex flex-row">
-        <input type="text" placeholder="Search For Books" id="txt_search" class="form-control my-auto me-5" style="height:40px;" name="search_for_books" />
+   <div class="d-flex flex-row wrapper">
+        <input type="text" id="search-form" placeholder="Search for books..." class="form-control my-auto me-5 " style="height:40px;" name="search_for_books" />
         <button class="my-3 btn btn-light border rounded border-dark me-5" type="submit" onclick="search()"> <i class="fas fa-search"></i> </button>
     </div>
+@*    <select id="ajax-select" class="selectpicker with-ajax" data-live-search="true"></select>
+*@
     <div id="bookView">
 
     </div>
@@ -43,7 +45,7 @@
 @section scripts{
     <script>
         "use strict";
-                var page = 1,
+        var page = 1,
         pageSize = 5,
         sortVal = "Id",
         sortDir = "asc",
@@ -52,12 +54,28 @@
         var shoppingCart = [];
 
         $(function () {
+
             get_book();
             initPaging("#bookView", get_book);
-
             get_category_filter();
-        });
 
+            $('#search-form').typeahead({
+                source: function (query, process) {
+                    return $.get('@Url.Action("GetBooksTitles","Book")', { q: query }, function (data) {
+                        return process(data);
+                    });
+                }
+            });
+            $('#search-form').on('input', function () {
+                q = $(this).val();
+                page = 1;
+                get_book();
+            });
+
+              
+
+        });
+        // get book list
         function get_book() {
             $.ajax({
                 cache: false,
@@ -75,8 +93,7 @@
                     $("#bookView").empty().append(result);
                     total_order_count();
                     loaddisplayselected();
-                    get_category_filter();
-                }
+                    get_category_filter();                }
             });
         }
         function filter_category(cat_title){
@@ -86,12 +103,12 @@
             get_book();
         }
           function search() {
-            q = $('#txt_search').val();
+            q = $('#search-form').val();
             page = 1;
             get_book();
-          //  $('#txt_search').val() = q;
             
         }
+
           function initPaging(div, callback) {
             $(div).on("click", ".pagedList a", function (e) {
                 e.preventDefault();
@@ -154,7 +171,7 @@
                 }
             });
         }
-
+        // ----- start add book form ---------
         function load_addform() {
       
             popup_modalform('#addBookModal', '#formholder', '@Url.Action("_AddBook","Book")', form_submit);
@@ -269,13 +286,17 @@
             $(div).modal('hide');
         }
 
+        //-------------   // ----- end add book form ---------
+
+        // ----- start add to cart ---------
         function add_to_cart(bookid, bookname, price){
 
-            var remove_button = `<a class="btn btn-danger ms-2" onclick="remove_from_cart('${bookid}', '${bookname}', '${price}')">Remove</a>`;
+            var remove_button = `<a class="btn btn-danger btn-sm ms-2" onclick="remove_from_cart('${bookid}', '${bookname}', '${price}')">Remove</a>`;
             var obj = {
                 "bookid": bookid,
                 "bookname": bookname,
-                "price": price
+                "price": price,
+                "quantity": parseInt($('#book_count_' + bookid).val())
             };
 
             shoppingCart.push(obj);
@@ -293,8 +314,8 @@
 
         function remove_from_cart(bookid, bookname, price){
 
-            var add_button = `<a class="btn btn-success ms-2" onclick="add_to_cart('${bookid}', '${bookname}', '${price}')">
-                                                    <i class="fa-solid fa-cart-shopping me-2"></i>
+            var add_button = `<a class="btn btn-success btn-sm ms-2 btn-sm" onclick="add_to_cart('${bookid}', '${bookname}', '${price}')">
+                                                            <i class="fa-solid fa-cart-shopping me-2"></i> ADD TO CART
                                                 </a>`;
             var localDatas = localStorage.getItem("shoppingCart");
             shoppingCart = JSON.parse(localDatas);
@@ -303,6 +324,9 @@
             localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
             $("#shop_" + bookid).empty().append(add_button);
             total_order_count();
+            $('#book_count_' + bookid).val(1);
+            $('#book_count_' + bookid).change();
+
         }
 
 
@@ -312,13 +336,31 @@
                 shoppingCart = JSON.parse(localDatas);
                 if (shoppingCart.length > 0) {
                     for (var i in shoppingCart) {
-                        var remove_button = `<a class="btn btn-danger ms-2" onclick="remove_from_cart('${shoppingCart[i].bookid}', '${shoppingCart[i].bookname} ', '${shoppingCart[i].price} ')">Remove</a>`;
-                        $('#shop_' + shoppingCart[i].bookid).empty().append(remove_button)
+                        var remove_button = `<a class="btn btn-danger btn-sm ms-2" onclick="remove_from_cart('${shoppingCart[i].bookid}', '${shoppingCart[i].bookname} ', '${shoppingCart[i].price} ')">REMOVE</a>`;
+                        $('#shop_' + shoppingCart[i].bookid).empty().append(remove_button);
+                        $('#book_count_' + shoppingCart[i].bookid).val(shoppingCart[i].quantity);
                     }
                 }
             }
          
         }
+
+        // Plus - Minus Implementation
+        function minus(id){
+            var count = parseInt($('#book_count_'+id).val()) - 1;
+            count = count < 1 ? 1 : count;
+            $('#book_count_' + id).val(count);
+            $('#book_count_' + id).change();
+        }
+        function plus(id){
+            var count = parseInt($('#book_count_' + id).val()) + 1;
+            count = count < 1 ? 1 : count;
+            $('#book_count_' + id).val(count);
+            $('#book_count_' + id).change();
+            
+        }
+
+       
 
     </script>
 }

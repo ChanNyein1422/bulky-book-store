@@ -14,5 +14,6 @@ namespace Data.Models
         [Key]
         public int Id { get; set; }
         public string Category { get; set; }
+        public int BookCount { get; set; } = 0;
     }
 }

@@ -15,7 +15,7 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Total Users</h5>
-                <p class="card-text">12</p>
+                <p class="card-text h3 fw-bold my-4" id="UserCount"></p>
                 <a class="btn btn-primary" asp-controller="User" asp-action="UserView">View Details</a>
             </div>
         </div>
@@ -24,7 +24,7 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Total Books Uploaded</h5>
-                <p class="card-text">23</p>
+                <p class="card-text h3 fw-bold my-4" id="BookCount"></p>
                 <a class="btn btn-primary" asp-controller="Book" asp-action="Index">View Details</a>
             </div>
         </div>
@@ -51,8 +51,24 @@
     <script>
 
         $(function () {
+            getDashboardData();
             getOrders();
+            
         });
+        // To be fixed
+        function getDashboardData(){
+            $.ajax({
+                cache: false,
+                url: '@Url.Action("GetCount","Home")',
+                success: function (response) {
+                    $('#UserCount').empty().append(response.UserCount);
+                    $('#BookCount').empty().append(response.BookCount);
+
+                }
+            });
+         
+        }
+        
         function getOrders() {
             $.ajax({
                 cache: false,
@@ -69,24 +85,29 @@
                 }
             });
         }
-        //function view_order_detail(orderid) {
-        //    $.ajax({
-        //        cache: false,
-        //        url: '@Url.Action("_AdminDetailView","Order")',
-        //        data: { id: orderid },
-        //        beforesend: function () {
+        function confirm_delete(id){
+            if(confirm("Are you sure want to delete this order?") == true){
+                delete_order(id);
+            }
+        }
 
-        //        },
-        //        success: function (response) {
-        //            $('#order_detail_' + orderid).toggle();
-
-        //            $('#order_detail_' + orderid).empty().append(response);
-        //        },
-        //        complete: function () {
-
-        //        }
-        //    });
-        // }
+        function delete_order(id) {
+            $.ajax({
+                cache: false,
+                url: '@Url.Action("DeleteOrder","Order")',
+                data: { id: id },
+                success: function (response) {
+                    if (response == 1) {
+                        alert("Order Deleted");
+                    }else{
+                        alert("Order Delete Failed");
+                    }
+                },
+                complete: function () {
+                    getOrders();
+                }
+            });
+        }
 
         function load_detail_form(id) {
             console.log(id);

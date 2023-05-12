@@ -10,6 +10,7 @@ namespace Data.ViewModel
     {
         public int BookId { get; set; }
         public int UserId { get; set; }
+        public int Count { get; set; }
     }
 
 

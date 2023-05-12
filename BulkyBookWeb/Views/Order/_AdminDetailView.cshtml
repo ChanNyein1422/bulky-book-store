@@ -15,8 +15,7 @@
             foreach (var data in Model)
             {
                 <p class="h4 fw-bold">@data.book.Title</p>
-                <p>By: @data.book.Author</p>
-                <p>Category: @data.book.Category</p>
+                <p>Quantity: @data.orderDetail.Quantity</p>
                 <p>Price: @data.orderDetail.Price</p>
                 <hr />
             }

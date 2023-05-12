@@ -2,6 +2,7 @@
 using Infra.Helper.BookApiRequest;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
 
 namespace BulkyBookWeb.Controllers
 {
@@ -21,6 +22,12 @@ namespace BulkyBookWeb.Controllers
         {
             var data = await this._ibook.GetAllBooks(page, pageSize, sortVal, sortDir, q, category);
             return PartialView(data);
+        }
+        //to be fixed
+        public async Task<IActionResult> GetBooksTitles()
+        {
+            var data = await this._ibook.GetBooksTitles();
+            return Ok(data);
         }
         public IActionResult _AddBook()
         {
@@ -95,6 +102,7 @@ namespace BulkyBookWeb.Controllers
             var data = await this._ibook.UpSert(book);
             return Ok(data);
         }
+
         public async Task<IActionResult> DeleteBook(int id)
         {
             var data = await this._ibook.DeleteBook(id);

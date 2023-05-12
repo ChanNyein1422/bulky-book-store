@@ -47,7 +47,7 @@ namespace BulkyBookAPI.Services.Order
                                                         order = o,
                                                         user = u
                                                     };
-            var data = await result.OrderBy(a => a.order.Id).ToListAsync();
+            var data = await result.OrderByDescending(a => a.order.OrderedTime).ToListAsync();
             return data;
         }
         public async Task<List<BookOrderDetailViewModel>> GetOrderDetails(string id)
@@ -72,7 +72,7 @@ namespace BulkyBookAPI.Services.Order
         }
         public async Task<List<tbOrder>> GetOrderByUser(int userId)
         {
-            var result = await _unitOfWork.orderRepo.GetAll().Where(x => x.UserId == userId).ToListAsync();
+            var result = await _unitOfWork.orderRepo.GetAll().Where(x => x.UserId == userId).OrderByDescending(x => x.OrderedTime).ToListAsync();
             return result;
         }
 
@@ -83,13 +83,12 @@ namespace BulkyBookAPI.Services.Order
             {
                 if (orders.Count() > 0)
                 {
-                    Random generator = new Random();
-                    var ordercode = generator.Next(0, 1000000).ToString("D6");
+                    var ordercode = Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
                     var orderid = Guid.NewGuid().ToString();
                     tbOrder order = new tbOrder();
                     order.Id = orderid;
                     order.OrderCode = ordercode;
-                    order.TotalBooks = orders.Count();
+                    order.TotalBooks = 0;
                     order.UserId = orders[0].UserId;
                     
 
@@ -99,8 +98,9 @@ namespace BulkyBookAPI.Services.Order
 
                     foreach (var orderDetail in orders)
                     {
+                        order.TotalBooks += orderDetail.Count;
                         var bookDetail = _unitOfWork.bookRepo.GetAll().FirstOrDefault(x => x.Id == orderDetail.BookId);
-                        var price = bookDetail.Price;
+                        var price = bookDetail.Price * orderDetail.Count;
                         var name = bookDetail.Title;
                         total += price; // tbbook table 
                         tbOrderDetail detail = new tbOrderDetail();
@@ -110,6 +110,7 @@ namespace BulkyBookAPI.Services.Order
                         detail.OrderCode = ordercode;
                         detail.UserId = orderDetail.UserId; 
                         detail.Price = price;
+                        detail.Quantity = orderDetail.Count;
                         details.Add(detail);
                     }
 

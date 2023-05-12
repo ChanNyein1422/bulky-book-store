@@ -28,21 +28,21 @@
     <div class="@_col">
         @foreach (var item in Model.Results)
         {
-            <div class="col" id="book_@item.Id">
+            <div class="col mb-2" id="book_@item.Id">
                 <div class="card">
                     @if (_role == "Admin")
                     {
-                        <img src="@item.ThumbnailUrl" class="card-img-top" style="height: 250px;" alt="Document Thumbnail">
+                        <img src="@item.ThumbnailUrl" class="card-img-top" style="height: 250px; object-fit: cover;" alt="Document Thumbnail">
                     }
                     else
                     {
-                        <img src="@item.ThumbnailUrl" class="card-img-top" style="height: 230px;" alt="Document Thumbnail">
+                        <img src="@item.ThumbnailUrl" class="card-img-top" style="height: 230px; object-fit: cover;" alt="Document Thumbnail">
                     }
                   
                     <div class="card-body">
                         <h5 class="card-title">@item.Title</h5>
                         <div class="card-text">
-                            Author - @item.Author <br />
+                            By- @item.Author <br />
                             Category - @item.Category <br />
                             Publisher - @item.Publisher <br />
                             Published Date - @item.PublishDate <br />
@@ -50,14 +50,14 @@
                             <p class="fw-bold pt-3">@item.Price MMK</p>
                           
 
-                            <div class="d-flex">
+                            <div class="d-flex flex-wrap">
                                 @if (item.BookUpload != null)
                                 {
-                                    <div class="mr-2">
-                                        <a class="btn btn-light border-dark" href="@item.BookUploadUrl" target="_blank">Download Now</a>
+                                    <div class="ms-2 me-3">
+                                        <a class="btn btn-light border-dark btn-sm" href="@item.BookUploadUrl" target="_blank">Download Now</a>
 
                                     </div>
-
+                                    <div class="vr"></div>
                                 }
                                 @if (_role == "Admin")
                                 {
@@ -67,14 +67,27 @@
                                 }
                                 else
                                 {
-                                    <div id="shop_@item.Id">
-                                        <a class="btn btn-success ms-2" onclick="add_to_cart('@item.Id', '@item.Title', '@item.Price')">
-                                            <i class="fa-solid fa-cart-shopping me-2"></i>
+                                    
+                                    <div id="add_cart_@item.Id" class="d-flex flex-row">
+                                        <a class="btn btn-light border rounded border-dark ms-2 btn-sm" onclick="plus(@item.Id)">
+                                            +
                                         </a>
+                                        <input type="text" value=1 class="form-control form-control-sm ms-2 text-center" style="width: 40px;" id="book_count_@item.Id" disabled/>
+                                        <a class="btn btn-light border rounded border-dark ms-2 btn-sm" onclick="minus(@item.Id)">
+                                            -
+                                        </a>
+
+                                    </div>
+                                    <div id="shop_@item.Id" class="ms-auto mt-2">
+                                        <a class="btn btn-success btn-sm ms-2 btn-sm" onclick="add_to_cart('@item.Id', '@item.Title', '@item.Price')">
+                                            <i class="fa-solid fa-cart-shopping me-2"></i> ADD TO CART
+                                        </a>
+
                                     </div>
                                 }
                             </div>
-                          
+                       
+                           
                         </div>
                     </div>
                 </div>

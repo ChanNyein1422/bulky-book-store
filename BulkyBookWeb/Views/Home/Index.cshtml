@@ -1,8 +1,17 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    var result = User.Identity.IsAuthenticated.ToString();
+
 }
 
 <div class="text-center">
     <h1 class="display-5">Weclome To Bulky Book Store</h1>
-    <a class="btn btn-light border border-dark rounded mt-5" href="../Book/Index">Check Out Books now</a>
+    @if (result == "True")
+    {
+        <a class="btn btn-light border border-dark rounded mt-5" href="../Book/Index">Check Out Books now</a>
+    }
+    else
+    {
+        <a class="btn btn-light border border-dark rounded mt-5" href="../User/Index">Log In Or Register</a>
+    }
 </div>

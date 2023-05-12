@@ -37,9 +37,5 @@ namespace BulkyBookAPI.Services.OrderDetail
             return result;
         }
 
-        public async Task<List<tbOrderDetail>> UpSert(List<tbOrderDetail> orderDetails)
-        {
-            return orderDetails;
-        }
     }
 }

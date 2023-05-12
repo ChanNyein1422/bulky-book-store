@@ -22,6 +22,8 @@
         function load_OrderDetails(){
             var localDatas = localStorage.getItem("shoppingCart");
             var totalPrice = 0;
+            var singleBookTotal = 0;
+            var totalQuantity = 0;
             shoppingCart = JSON.parse(localDatas);
            
             console.log(shoppingCart);
@@ -33,17 +35,24 @@
                 <tr>
                     <th scope="col">Book ID</th>
                     <th scope="col">Title</th>
-                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Quantity Price</th>
+                    <th scope="col">Total Price</th>
                 </tr>
             </thead>
             <tbody>`;
                 for(var i in shoppingCart){
+                    singleBookTotal = parseFloat(shoppingCart[i].price) * parseFloat(shoppingCart[i].quantity);
+                     
                     elements += `<tr id="${shoppingCart[i].bookid}">
                                 <th scope="row">${shoppingCart[i].bookid}</th>
                                 <td>${shoppingCart[i].bookname}</td>
-                                <td>${shoppingCart[i].price}</td>
+                                <td>${shoppingCart[i].quantity}</td>
+                                  <td>${shoppingCart[i].price}</td>
+                                        <td>${singleBookTotal}</td>
                     </tr>`;
-                    totalPrice += parseFloat(shoppingCart[i].price);
+                    totalPrice += singleBookTotal;
+                    totalQuantity += shoppingCart[i].quantity;
                 }
                 
                 elements += `
@@ -57,7 +66,7 @@
                   <div class="justify-content-center text-center my-3 border rounded border-secondary">
                   <p class="h4 fw-bold my-3">Order Receipt</p>
                 <p>Total Price: ${totalPrice}</p>
-                <p>Total Books: ${cartLength}</p>
+                <p>Total Quantity: ${totalQuantity}</p>
                 <div>
                 <button class="btn btn-success my-3" onclick="make_order()">Order Now</button>
                 </div>
@@ -85,7 +94,8 @@
                 for(var i in shoppingCart){
                    var obj = {
                        "BookId": shoppingCart[i].bookid,
-                       "UserId": @_userid
+                       "UserId": @_userid,
+                       "Count": parseInt(shoppingCart[i].quantity)
                    }
                    objArr.push(obj);
                 }
@@ -112,7 +122,7 @@
            
             }
         }
-
+       
        
 
     </script>

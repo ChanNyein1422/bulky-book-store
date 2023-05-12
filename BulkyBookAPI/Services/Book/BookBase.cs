@@ -17,22 +17,25 @@ namespace BulkyBookAPI.Services.Book
             _context = context;
             this._unitOfWork = new UnitOfWork(_context);
         }
-        public int BookDelete(int id)
+        public async Task<int> BookDelete(int id)
         {
-            var result = _unitOfWork.bookRepo.GetAll().FirstOrDefault(b => b.Id == id);
+            var result = await _unitOfWork.bookRepo.GetAll().FirstOrDefaultAsync(b => b.Id == id);
             if(result != null)
             {
+                var category = _unitOfWork.categoryRepo.GetAll().Where(a => a.Category == result.Category).FirstOrDefault();
+                if (category != null)
+                {
+                    category.BookCount -= 1;
+                    category = await _unitOfWork.categoryRepo.UpdateAsync(category);
+
+                }
                 _unitOfWork.bookRepo.Delete(result);
+              
                 return 1;
             }
             return 0;
         }
 
-        //public async Task<List<tbBook>> GetAllBooks()
-        //{
-        //    var result = await _unitOfWork.bookRepo.GetAll().ToListAsync();
-        //    return result;
-        //}
         public async Task<Model<tbBook>> GetAllBooks(int? page = 1, int? pageSize = 10, string? sortVal = "Id", string? sortDir = "asc", string? q = "", string? category = "")
         {
             Expression<Func<tbBook, bool>> basicFilter = null;
@@ -59,6 +62,17 @@ namespace BulkyBookAPI.Services.Book
             return result;
         }
 
+        public async Task<List<string>> GetBooksTitles()
+        {
+            var data = await _unitOfWork.bookRepo.GetAll().ToListAsync();
+            List<string> bookTitles = new List<string>();
+            foreach (var item in data)
+            {
+                bookTitles.Add(item.Title);
+            }
+            return bookTitles;
+        }
+
         public tbBook GetBookById(int id)
         {
             var result = _unitOfWork.bookRepo.GetById(id);
@@ -71,7 +85,6 @@ namespace BulkyBookAPI.Services.Book
                 return null;
             }
         }
-
         public async Task<tbBook> UpSert(tbBook book)
         {
             try
@@ -84,6 +97,12 @@ namespace BulkyBookAPI.Services.Book
                 {
                     book.UploadedDate = DateTime.Now;
                     book = await _unitOfWork.bookRepo.InsertReturnAsync(book);
+                    var category = _unitOfWork.categoryRepo.GetAll().Where(a => a.Category == book.Category).FirstOrDefault();
+                    if (category != null)
+                    {
+                        category.BookCount += 1;
+                        category = await _unitOfWork.categoryRepo.UpdateAsync(category);
+                    }
                 }
             }
             catch (Exception ex) {

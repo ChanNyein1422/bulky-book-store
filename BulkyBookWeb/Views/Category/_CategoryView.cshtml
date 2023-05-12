@@ -1,11 +1,12 @@
 ﻿@model List<Data.Models.tbCategory>
 
 @if(Model.Count() > 0){
-<table class="table">
+<table class="table text-center">
     <thead class="thead-dark">
         <tr>
             <th scope="col">#</th>
             <th scope="col">Category</th>
+            <th scope="col">Current Book Count</th>
             <th scope="col">Action</th>
         </tr>
     </thead>
@@ -15,6 +16,7 @@
             <tr id="@category.Id">
                 <th scope="row">@category.Id</th>
                 <td id="category_@category.Id">@category.Category</td>
+                <td>@category.BookCount</td>
                 <td>
 
                         <a class="btn btn-info" onclick="load_editform(@category.Id)">Edit</a>

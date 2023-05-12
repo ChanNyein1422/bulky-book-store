@@ -34,6 +34,13 @@ namespace Infra.Helper.BookApiRequest
             return data;
         }
 
+        public async Task<List<string>> GetBooksTitles()
+        {
+            string url = $"api/book/gettitlearray";
+            var data = await ApiRequest<List<string>>.GetRequest(url.route(Request.bulkybookapi));
+            return data;
+        }
+
         public async Task<tbBook> UpSert(tbBook book)
         {
             string url = $"api/book/uploadbook";

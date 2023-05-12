@@ -1,5 +1,6 @@
 using BulkyBookAPI.Services.Book;
 using BulkyBookAPI.Services.Category;
+using BulkyBookAPI.Services.Dashboard;
 using BulkyBookAPI.Services.Order;
 using BulkyBookAPI.Services.OrderDetail;
 using BulkyBookAPI.Services.User;
@@ -37,6 +38,7 @@ builder.Services.AddScoped<IBook>(s => new BookBase(s.GetService<ApplicationDbCo
 builder.Services.AddScoped<ICategory>(s => new CategoryBase(s.GetService<ApplicationDbContext>()));
 builder.Services.AddScoped<IOrder>(s => new OrderBase(s.GetService<ApplicationDbContext>()));
 builder.Services.AddScoped<IOrderDetail>(s => new OrderDetailBase(s.GetService<ApplicationDbContext>()));
+builder.Services.AddScoped<ICount>(s => new CountBase(s.GetService<ApplicationDbContext>()));
 
 
 var app = builder.Build();

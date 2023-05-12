@@ -46,6 +46,11 @@ namespace BulkyBookWeb.Controllers
             return Ok(data);
         }
 
+        public async Task<IActionResult> DeleteOrder(string id)
+        {
+            var data = await this._iorder.DeleteOrder(id); 
+            return Ok(data);
+        }
       
     }
 }
