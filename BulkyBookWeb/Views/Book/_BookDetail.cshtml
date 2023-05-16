@@ -1,0 +1,30 @@
+﻿@model Data.Models.tbBook;
+<!-- Modal header -->
+
+<!-- Modal body -->
+<div class="modal-body">
+    <button type="button" class="btn-close float-end" data-bs-dismiss="modal" aria-label="Close" aria-hidden="true"></button>
+    <div class="container-fluid mb-3">
+        @if(Model != null)
+        {
+            <div class="row">
+                <div class="col-md-5">
+                    <img src="@Model.ThumbnailUrl" alt="Image" class="img-fluid">
+                </div>
+                <div class="col-md-7">
+                    <p class="h3 fw-bold">@Model.Title</p>
+                    By- @Model.Author <br />
+                    Category - @Model.Category <br />
+                    Publisher - @Model.Publisher <br />
+                    Published Date - @Model.PublishDate <br />
+
+                    <p class="fw-bold pt-3">@Model.Price MMK</p>
+                </div>
+            </div>
+        }
+       
+    </div>
+    <a class="btn btn-light border-dark btn-sm" href="@Model.BookUploadUrl" target="_blank">Download Now</a>
+
+    <button type="button" class="btn btn-secondary float-end mb-3" data-bs-dismiss="modal" aria-label="Close" aria-hidden="true">Okay</button>
+</div>

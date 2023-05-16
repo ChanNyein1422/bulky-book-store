@@ -10,24 +10,28 @@
     <input type="hidden" name="ID" value="@Model.Id" />
     <input type="hidden" name="bookUpload" value="@Model.BookUpload" id="bookUpload" />
     <input type="hidden" name="Thumbnail" value="@Model.Thumbnail" id="thumbnailUpload" />
+    <input type="hidden" name="Category" value="@Model.Category" id="category_string" />
     <div class="modal-body">
         <div class="input-group mb-3">
             <input type="text" class="form-control" placeholder="Title" name="Title" value="@Model.Title" aria-label="Title" aria-describedby="basic-addon1" required>
         </div>
-        <select class="form-select mb-3" id="category_select" name="Category" aria-label="Category Select">
-        </select>
-
+        <div class="mb-3">
+            <p>Select Category : </p>
+            <select class="col-md-12 js-example-basic-multiple" multiple="multiple" id="category_select" required>
+            </select>
+        </div>
+       
         <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Author" name="Author" value="@Model.Author" aria-label="Author" aria-describedby="basic-addon1">
+            <input type="text" class="form-control" placeholder="Author" name="Author" value="@Model.Author" aria-label="Author" aria-describedby="basic-addon1" required>
         </div>
         <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Publisher" name="Publisher" value="@Model.Publisher" aria-label="Publisher" aria-describedby="basic-addon1">
+            <input type="text" class="form-control" placeholder="Publisher" name="Publisher" value="@Model.Publisher" aria-label="Publisher" aria-describedby="basic-addon1" required>
         </div>
         <div class="input-group mb-3">
-            <input type="date" class="form-control" placeholder="PublishDate" name="PublishDate" value="@Model.PublishDate" aria-label="PublishDate" aria-describedby="basic-addon1">
+            <input type="date" class="form-control" placeholder="PublishDate" name="PublishDate" value="@Model.PublishDate" aria-label="PublishDate" aria-describedby="basic-addon1" required>
         </div>
         <div class="input-group mb-3">
-            <input type="number" class="form-control" placeholder="Price" name="Price" value="@Model.Price" aria-label="Price" aria-describedby="basic-addon1">
+            <input type="number" class="form-control" placeholder="Price" name="Price" value="@Model.Price" aria-label="Price" aria-describedby="basic-addon1" required>
         </div>
         <p>Select a File to Upload</p>
         <div class="input-group mb-3">

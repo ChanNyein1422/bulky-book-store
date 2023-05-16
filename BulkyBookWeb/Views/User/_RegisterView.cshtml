@@ -1,27 +1,54 @@
-﻿<form class="mt-5 container-fluid w-50 text-center" id="RegisterForm">
+﻿@{
+    var result = User.Identity.IsAuthenticated.ToString();
+    var _role = "User";
+    if (result == "True")
+    {
+        _role = User.Claims.ToArray()[BulkyBookWeb.AuthServices.Auth.AuthDataIndex.Role].Value;
+    }
+}
+
+<form class="mt-5 container-fluid w-50 text-center" id="RegisterForm">
             <div>
                 <h4 class="text-center">Welcome to Bulky Book Store</h4>
             </div>
             <div class="mt-3">
-                <label>Please Enter Your Name</label>
+                <label>Please Enter Name</label>
                 <input type="text" name="Name" class="form-control mt-2" id="txt-name" required/>
             </div>
             <div class="mt-3">
-                <label>Please Enter Your Email</label>
+                <label>Please Enter Email</label>
                 <input type="email" name="Email" class="form-control mt-2" id="txt-email" required/>
             </div>
             <div class="mt-3">
-                <label>Create Your Password</label>
+                <label>Create Password</label>
         <input type="password" name="Password" class="form-control mt-2" id="txt-password" required />
             </div>
             <div class="mt-3">
-                <label>Confirm Your Password</label>
+                <label>Confirm Password</label>
         <input type="password" name="ConfirmPassword" class="form-control mt-2" id="txt-confirm-password" required />
             </div>
-
+    @if(_role == "Admin")
+    {
+        <div class="mt-3">
+            <label>Select Account Type ( Default : User ) </label>
+            <select class="form-select mt-2" name="UserRole" aria-label="Default select example">
+                <option value="User">Select Account Type</option>
+                <option value="User" selected>User</option>
+                <option value="Admin">Admin</option>
+            </select>
+        </div>
+      
+    }
             <div class="mt-5">
-                <a class="btn btn-secondary float-start" asp-controller="User" asp-action="Index">Back</a>
-                <button class="btn btn-primary float-end" type="submit">Register</button>
+                @if (result == "True")
+                {
+            <a class="btn btn-secondary float-start" asp-controller="User" asp-action="UserView">Back</a>
+                }
+                else{
+            <a class="btn btn-secondary float-start" asp-controller="User" asp-action="Index">Back</a>
+                    }
+
+                <button class="btn btn-primary float-end" id="reg-button" type="submit">Register</button>
             </div>
 </form>
 
@@ -34,34 +61,46 @@
         function register() {
             $('#RegisterForm').submit(function (e) {
                 e.preventDefault();
-                $.ajax({
-                    cache: false,
-                    url: "../User/UpSert",
-                    type: "Post",
-                    data: $(this).serialize()
-                    ,
-                    beforeSend: function () {
-                    },
-                    success: function (response) {
-                        if (response.ReturnMessage == "Unmatch Password"){
-                            alert("The password aren't matching");
+                if ($('#txt-password').val() == $('#txt-confirm-password').val()){
+                    $.ajax({
+                        cache: false,
+                        url: "../User/UpSert",
+                        type: "Post",
+                        data: $(this).serialize()
+                        ,
+                        beforeSend: function () {
+                            $('#reg-button').prop('disabled', true);
+                            $('#reg-button').empty().append("<div class='spinner-border spinner-border-sm me-2'></div>Please Wait...");
+                        },
+                        success: function (response) {
+                            if (response.ReturnMessage == "Email Already Exists") {
+                                alert("This Email is already registered. Please Try Another Email.");
+                            }
+                            else if (response.ReturnMessage == "User Name Already Exists") {
+                                alert("This User Name is already registered. Please Try Another User Name.");
+                            }
+                            else if (response != null) {
+                                alert(response.UserRole + " Account Successfully Registered With Name, " + response.Name);
+                                if(response.UserRole == "Admin"){
+                                    window.location = "../User/UserView";
+                                }else{
+                                     window.location = "../";
+                                }
+                               
+                            } else {
+                                alert("Registration Failed");
+                            }
+                        },
+                        complete: function () {
+                            $('#reg-button').prop('disabled', false);
+                            $('#reg-button').empty().append("Register Account");
+
                         }
-                        else if (response.ReturnMessage == "Email Already Exists"){
-                            alert("This Email is already registered");
-                        }
-                        else if (response.ReturnMessage == "User Name Already Exists"){
-                            alert("This User Name is already registered.");
-                        }
-                        else if(response != null){
-                       alert("Welcome, "+response.Name);
-                       window.location="../";
-                        }else{
-                            alert("Registration Failed");
-                        }
-                    },
-                    complete: function () {
-                    }
-                });
+                    });
+                }else{
+                    alert("The Passwords aren't matching. Please Try Again");
+                }
+
             });
         }
     </script>

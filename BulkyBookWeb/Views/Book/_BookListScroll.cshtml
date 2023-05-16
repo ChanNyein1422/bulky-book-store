@@ -1,0 +1,34 @@
+﻿@using Infra.Services;
+@using Data.Models;
+@using Data.ViewModel;
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+@using X.PagedList.Web.Common;
+@model PagedListClient<WishListViewModel>;
+@{
+    var result = User.Identity.IsAuthenticated.ToString();
+    var _role = "User";
+    var _userid = 0;
+    var _col = "row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3";
+    if (result == "True")
+    {     
+        _role = User.Claims.ToArray()[BulkyBookWeb.AuthServices.Auth.AuthDataIndex.Role].Value;
+        _userid = Convert.ToInt32(User.Claims.ToArray()[BulkyBookWeb.AuthServices.Auth.AuthDataIndex.Id].Value);
+    }
+
+}
+
+@if(Model.TotalCount > 0){
+
+    @if(_role != "Admin")
+    {
+        _col = "row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3";
+    }
+    <div class="@_col">
+        @Html.Partial("_BookListPartial", Model)
+     </div>
+
+}
+else{
+    <p class="h2">No books here yet.</p>
+}

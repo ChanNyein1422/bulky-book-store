@@ -15,9 +15,10 @@ namespace BulkyBookAPI.Controllers
             _iOrder = order;
         }
         [HttpGet("api/order/getallorders")]
-        public async Task<IActionResult> GetAllOrders()
+        public async Task<IActionResult> GetAllOrders(int? page = 1, int? pageSize = 10, string? sortVal = "Id", string? sortDir = "asc",
+                                string? q = "")
         {
-            var result = await _iOrder.GetAllOrders();
+            var result = await _iOrder.GetAllOrders(page, pageSize, sortVal, sortDir, q);
             return Ok(result);
         }
 

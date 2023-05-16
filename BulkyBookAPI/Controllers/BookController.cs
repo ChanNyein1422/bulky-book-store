@@ -16,9 +16,17 @@ namespace BulkyBookAPI.Controllers
 
         [HttpGet("api/book/getallbooks")]
         public async Task<IActionResult> GetBooks(int? page = 1, int? pageSize = 10, string? sortVal = "Id", string? sortDir = "asc",
-                                string? q = "", string? category = "")
+                                string? q = "", string? category = "", int? userid = 0)
         {
-            var result = await this._ibook.GetAllBooks(page, pageSize, sortVal, sortDir, q, category);
+            var result = await this._ibook.GetAllBooks(page, pageSize, sortVal, sortDir, q, category, userid);
+            return Ok(result);
+        }
+
+
+        [HttpGet("api/book/getbookswithoutpagination")]
+        public async Task<IActionResult> GetBooksWithoutPagination()
+        {
+            var result = await this._ibook.GetBooksWithoutPagination();
             return Ok(result);
         }
 

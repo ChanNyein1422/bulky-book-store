@@ -3,7 +3,9 @@ using Data.Models;
 using Data.ViewModel;
 using Infra.Services;
 using Infra.UnitOfWork;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace BulkyBookAPI.Services.Order
 {
@@ -23,7 +25,6 @@ namespace BulkyBookAPI.Services.Order
             if(result != null)
             {
                 var orderdetails = await _unitOfWork.orderDetailRepo.GetAll().Where(x => x.OrderId == id).ToListAsync();
-                _unitOfWork.orderRepo.Delete(result);
                 if(orderdetails != null)
                 {
                     foreach(var item in orderdetails)
@@ -31,23 +32,46 @@ namespace BulkyBookAPI.Services.Order
                         _unitOfWork.orderDetailRepo.Delete(item);
                     }
                 }
+                _unitOfWork.orderRepo.Delete(result);
+
                 return 1;
             }
             return 0;
         }
 
-        public async Task<List<UserOrderViewModel>> GetAllOrders()
+        public async Task<Model<UserOrderViewModel>> GetAllOrders(int? page = 1, int? pageSize = 10, string? sortVal = "Id", string? sortDir = "asc", string? q = "")
         {
-            IQueryable<UserOrderViewModel> result = from o in _unitOfWork.orderRepo.GetAll()
-                                                    join u in _unitOfWork.userRepo.GetAll()
-                                                    on o.UserId equals u.Id
+            Expression<Func<UserOrderViewModel, bool>> basicFilter = null;
+            IQueryable<UserOrderViewModel> query = from o in _unitOfWork.orderRepo.GetAll()
+                                                   join u in _unitOfWork.userRepo.GetAll()
+                                                   on o.UserId equals u.Id
 
-                                                    select new UserOrderViewModel
-                                                    { 
-                                                        order = o,
-                                                        user = u
-                                                    };
-            var data = await result.OrderByDescending(a => a.order.OrderedTime).ToListAsync();
+                                                   select new UserOrderViewModel
+                                                   {
+                                                       order = o,
+                                                       user = u
+                                                   };
+            if (!String.IsNullOrEmpty(q))
+            {
+                basicFilter = PredicateBuilder.New<UserOrderViewModel>();
+                basicFilter = basicFilter.Or(a => a.order.OrderCode.Contains(q));
+                basicFilter = basicFilter.Or(a => a.user.Name.Contains(q));
+                query = query.Where(basicFilter);
+            }
+            // var 
+
+            //IQueryable<UserOrderViewModel> result = from o in _unitOfWork.orderRepo.GetAll().Where(basicFilter)
+            //                                        join u in _unitOfWork.userRepo.GetAll()
+            //                                        on o.UserId equals u.Id
+
+            //                                        select new UserOrderViewModel
+            //                                        { 
+            //                                            order = o,
+            //                                            user = u
+            //                                        };
+            query = query.OrderByDescending(a => a.order.OrderedTime);
+            //query = SORTLIT<UserOrderViewModel>.Sort(query, sortVal, sortDir);
+            var data = await PagingService<UserOrderViewModel>.getPaging(page ?? 1, pageSize ?? 10, query);
             return data;
         }
         public async Task<List<BookOrderDetailViewModel>> GetOrderDetails(string id)
@@ -85,6 +109,7 @@ namespace BulkyBookAPI.Services.Order
                 {
                     var ordercode = Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
                     var orderid = Guid.NewGuid().ToString();
+                    var discount = orders[0].Discount;
                     tbOrder order = new tbOrder();
                     order.Id = orderid;
                     order.OrderCode = ordercode;
@@ -114,7 +139,7 @@ namespace BulkyBookAPI.Services.Order
                         details.Add(detail);
                     }
 
-                    order.TotalAmount = total;
+                    order.TotalAmount = total - (total * discount);
 
                     var addedorder = await _unitOfWork.orderRepo.InsertReturnAsync(order);
                     await _unitOfWork.orderDetailRepo.InsertListAsync(details);

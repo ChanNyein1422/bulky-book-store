@@ -37,6 +37,10 @@
     <div class="spinner-border" role="status"></div>
     <span class="h3 ms-3"> Loading Orders. Please Wait....</span>
 </div>
+<div class="d-flex flex-row">
+    <input type="text" placeholder="Search For Order Code or User Name" id="txt_search" class="form-control my-auto me-5" style="height:40px;" name="searchbar" />
+    <button class="my-3 btn btn-light border rounded border-dark me-5" id="search_button" type="submit" onclick="search()"> <i class="fas fa-search"></i> </button>
+</div>
 <div id="OrderView"></div>
 
 <div class="modal fade" id="viewOrderDetail" tabindex="-1" aria-labelledby="viewOrderDetailLabel" aria-hidden="true">
@@ -50,11 +54,30 @@
 @section scripts{
     <script>
 
+        var page = 1,
+            pageSize = 5,
+            sortVal = "Id",
+            sortDir = "asc",
+            q = "";
+
         $(function () {
             getDashboardData();
+
             getOrders();
-            
+            initPaging("#OrderView", getOrders);
+
+            $('#txt_search').on('input', function () {
+                q = $(this).val();
+                page = 1;
+                getOrders();
+            });
+
+            $('#search_button').on('click', function () {
+                $('#txt_search').val('');
+                $('#txt_search').trigger('input');
+            });
         });
+
         // To be fixed
         function getDashboardData(){
             $.ajax({
@@ -73,6 +96,13 @@
             $.ajax({
                 cache: false,
                 url: '@Url.Action("_AdminOrderView","Order")',
+                data: {
+                    page: page,
+                    pageSize: pageSize,
+                    sortVal: sortVal,
+                    sortDir: sortDir,
+                    q: q
+                },
                 beforeSend: function () {
 
                 },
@@ -85,6 +115,29 @@
                 }
             });
         }
+        function initPaging(div, callback) {
+            $(div).on("click", ".pagedList a", function (e) {
+                e.preventDefault();
+                var $a = $(this).attr("href");
+                try {
+                    var pageurl = $a.split(/=/);
+                    page = pageurl[1];
+                    if (page == null) {
+                        page = 1;
+                    }
+                }
+                catch (e) {
+                    page = 1;
+                }
+                callback();
+            });
+        }
+        function search() {
+            q = $('#txt_search').val();
+            page = 1;
+            getOrders();
+        }
+
         function confirm_delete(id){
             if(confirm("Are you sure want to delete this order?") == true){
                 delete_order(id);
@@ -97,9 +150,7 @@
                 url: '@Url.Action("DeleteOrder","Order")',
                 data: { id: id },
                 success: function (response) {
-                    if (response == 1) {
-                        alert("Order Deleted");
-                    }else{
+                    if (response != 1) {
                         alert("Order Delete Failed");
                     }
                 },

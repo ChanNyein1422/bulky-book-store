@@ -7,6 +7,11 @@ body {
     margin-bottom: 60px;
     background-color: #fbfbfb;
 }
+
+.btn-default {
+    border: 2px solid gray;
+}
+
 .btn-light:hover {
     background-color: darkgray;
 }

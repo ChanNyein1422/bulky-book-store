@@ -1,12 +1,13 @@
 ﻿@using Infra.Services;
 @using Data.Models;
+@using Data.ViewModel;
 @using X.PagedList;
 @using X.PagedList.Mvc.Core;
 @using X.PagedList.Web.Common;
-@model PagedListClient<tbBook>;
+@model PagedListClient<WishListViewModel>;
 @{
     var result = User.Identity.IsAuthenticated.ToString();
-    var _role = "Login";
+    var _role = "User";
     var _userid = 0;
     var _col = "row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3";
     if (result == "True")
@@ -17,88 +18,24 @@
 
 }
 
-<div id="CategoryFilter"></div>
+@if (Model.TotalCount > 0) {
 
-@if(Model.TotalCount > 0){
-
-    @if(_role != "Admin")
+    @if (_role != "Admin")
     {
         _col = "row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3";
     }
     <div class="@_col">
-        @foreach (var item in Model.Results)
-        {
-            <div class="col mb-2" id="book_@item.Id">
-                <div class="card">
-                    @if (_role == "Admin")
-                    {
-                        <img src="@item.ThumbnailUrl" class="card-img-top" style="height: 250px; object-fit: cover;" alt="Document Thumbnail">
-                    }
-                    else
-                    {
-                        <img src="@item.ThumbnailUrl" class="card-img-top" style="height: 230px; object-fit: cover;" alt="Document Thumbnail">
-                    }
-                  
-                    <div class="card-body">
-                        <h5 class="card-title">@item.Title</h5>
-                        <div class="card-text">
-                            By- @item.Author <br />
-                            Category - @item.Category <br />
-                            Publisher - @item.Publisher <br />
-                            Published Date - @item.PublishDate <br />
-                         
-                            <p class="fw-bold pt-3">@item.Price MMK</p>
-                          
 
-                            <div class="d-flex flex-wrap">
-                                @if (item.BookUpload != null)
-                                {
-                                    <div class="ms-2 me-3">
-                                        <a class="btn btn-light border-dark btn-sm" href="@item.BookUploadUrl" target="_blank">Download Now</a>
+        @Html.Partial("_BookListPartial", Model)
 
-                                    </div>
-                                    <div class="vr"></div>
-                                }
-                                @if (_role == "Admin")
-                                {
-                                    <a class="btn btn-danger ms-2" onclick="delete_book(@item.Id)">
-                                        <i class="fa fa-trash" aria-hidden="true"></i>
-                                    </a>
-                                }
-                                else
-                                {
-                                    
-                                    <div id="add_cart_@item.Id" class="d-flex flex-row">
-                                        <a class="btn btn-light border rounded border-dark ms-2 btn-sm" onclick="plus(@item.Id)">
-                                            +
-                                        </a>
-                                        <input type="text" value=1 class="form-control form-control-sm ms-2 text-center" style="width: 40px;" id="book_count_@item.Id" disabled/>
-                                        <a class="btn btn-light border rounded border-dark ms-2 btn-sm" onclick="minus(@item.Id)">
-                                            -
-                                        </a>
-
-                                    </div>
-                                    <div id="shop_@item.Id" class="ms-auto mt-2">
-                                        <a class="btn btn-success btn-sm ms-2 btn-sm" onclick="add_to_cart('@item.Id', '@item.Title', '@item.Price')">
-                                            <i class="fa-solid fa-cart-shopping me-2"></i> ADD TO CART
-                                        </a>
-
-                                    </div>
-                                }
-                            </div>
-                       
-                           
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
+     
  </div>
+    <div class="pagedList" style="text-align : center; display: inline">
+        @Html.PagedListPager(Model.Results, page => Url.Action("_BookList", "Book",
+    new { page }), PagedListRenderOptions.ClassicPlusFirstAndLast)
+    </div>
+
 }
 else{
     <p class="h2">No books here yet.</p>
 }
-<div class="pagedList" style="text-align : center; display: inline">
-    @Html.PagedListPager(Model.Results, page => Url.Action("_BookList", "Book",
-    new { page }), PagedListRenderOptions.ClassicPlusFirstAndLast)
-</div>

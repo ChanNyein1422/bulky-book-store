@@ -16,5 +16,7 @@ namespace Data.Models
         public virtual DbSet<tbCategory> Categories { get; set; }
         public virtual DbSet<tbOrder> Orders { get; set; }
         public virtual DbSet<tbOrderDetail> OrderDetails { get; set; }
+        public virtual DbSet<tbWishList> WishLists { get; set; }
+
     }
 }

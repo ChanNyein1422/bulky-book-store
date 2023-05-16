@@ -1,0 +1,38 @@
+﻿@model List<Data.ViewModel.UserWishListViewModel>
+
+
+@if (Model.Count() > 0)
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+    @foreach (var item in Model)
+        {
+        <div class="col mb-2" id="book_@item.book.Id">
+            <div class="card" style="height: 180px;">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                            <img src="@item.book.ThumbnailUrl" class="rounded-start" style="object-fit: cover; width:100px; height: 180px;" alt="...">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                                <div class="d-flex flex-row">
+                                    <h5 class="card-title">@item.book.Title</h5>
+                                    <button class="btn btn-light ms-auto" onclick="remove_from_wishlist(@item.book.Id)"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                                
+                                <div class="card-text">
+                                    <p class="h6 fw-lighter fst-italic">@item.book.Category</p>
+                                    <p class="fw-bold pt-3">@item.book.Price MMK</p>
+
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+         </div>
+    }
+    </div>
+}
+else
+{
+    <p class="h6 mt-5">No wish list here yet.</p>
+}

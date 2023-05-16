@@ -1,4 +1,5 @@
 ﻿using Data.Models;
+using Data.ViewModel;
 using Infra.Services;
 using Infra.UnitOfWork;
 using LinqKit;
@@ -22,12 +23,15 @@ namespace BulkyBookAPI.Services.Book
             var result = await _unitOfWork.bookRepo.GetAll().FirstOrDefaultAsync(b => b.Id == id);
             if(result != null)
             {
-                var category = _unitOfWork.categoryRepo.GetAll().Where(a => a.Category == result.Category).FirstOrDefault();
-                if (category != null)
+                var categoryArray = result.Category.Split(", ");
+                foreach (var i in categoryArray)
                 {
-                    category.BookCount -= 1;
-                    category = await _unitOfWork.categoryRepo.UpdateAsync(category);
-
+                    var category = _unitOfWork.categoryRepo.GetAll().Where(a => a.Category == i).FirstOrDefault();
+                    if (category != null)
+                    {
+                        category.BookCount -= 1;
+                        category = await _unitOfWork.categoryRepo.UpdateAsync(category);
+                    }
                 }
                 _unitOfWork.bookRepo.Delete(result);
               
@@ -36,7 +40,8 @@ namespace BulkyBookAPI.Services.Book
             return 0;
         }
 
-        public async Task<Model<tbBook>> GetAllBooks(int? page = 1, int? pageSize = 10, string? sortVal = "Id", string? sortDir = "asc", string? q = "", string? category = "")
+        public async Task<Model<WishListViewModel>> GetAllBooks(int? page = 1, int? pageSize = 10, string? sortVal = "Id",
+            string? sortDir = "asc", string? q = "", string? category = "", int? userid = 0)
         {
             Expression<Func<tbBook, bool>> basicFilter = null;
             Expression<Func<tbBook, bool>> categoryFilter = null;
@@ -44,9 +49,9 @@ namespace BulkyBookAPI.Services.Book
             if (!String.IsNullOrEmpty(q))
             {
                 basicFilter = PredicateBuilder.New<tbBook>();
-                basicFilter = basicFilter.Or(a => a.Title.Contains(q));
-                basicFilter = basicFilter.Or(a => a.Author.Contains(q));
-                basicFilter = basicFilter.Or(a => a.Publisher.Contains(q));
+                basicFilter = basicFilter.Or(a => a.Title.StartsWith(q));
+                basicFilter = basicFilter.Or(a => a.Author.StartsWith(q));
+                basicFilter = basicFilter.Or(a => a.Publisher.StartsWith(q));
                 query = query.Where(basicFilter);
             }
 
@@ -56,21 +61,27 @@ namespace BulkyBookAPI.Services.Book
                 query = query.Where(categoryFilter);
             }
 
+            var wishlist = _unitOfWork.wishListRepo.GetAll().Where(a => a.UserId == userid).AsQueryable();
+
             query = SORTLIT<tbBook>.Sort(query, sortVal, sortDir);
-            var result = await PagingService<tbBook>.getPaging(page ?? 1, pageSize ?? 10, query);
+
+            var bookModel = (from book in query
+                          select new WishListViewModel
+                          {
+                              book = book,
+                              isWishListed = wishlist.Where(a => a.BookId == book.Id).FirstOrDefault() != null ? true : false,
+                              WishListCount = wishlist.Where(a => a.BookId == book.Id).Count()
+                          });;
+
+            var result = await PagingService<WishListViewModel>.getPaging(page ?? 1, pageSize ?? 10, bookModel);
 
             return result;
         }
 
         public async Task<List<string>> GetBooksTitles()
         {
-            var data = await _unitOfWork.bookRepo.GetAll().ToListAsync();
-            List<string> bookTitles = new List<string>();
-            foreach (var item in data)
-            {
-                bookTitles.Add(item.Title);
-            }
-            return bookTitles;
+            var data = await _unitOfWork.bookRepo.GetAll().Select(a=>a.Title).ToListAsync(); //.Select(a=>a.Title).
+            return data;
         }
 
         public tbBook GetBookById(int id)
@@ -96,12 +107,20 @@ namespace BulkyBookAPI.Services.Book
                 else
                 {
                     book.UploadedDate = DateTime.Now;
-                    book = await _unitOfWork.bookRepo.InsertReturnAsync(book);
-                    var category = _unitOfWork.categoryRepo.GetAll().Where(a => a.Category == book.Category).FirstOrDefault();
-                    if (category != null)
+                    if(book.Category == "")
                     {
-                        category.BookCount += 1;
-                        category = await _unitOfWork.categoryRepo.UpdateAsync(category);
+                        book.Category = "N/A";
+                    }
+                    book = await _unitOfWork.bookRepo.InsertReturnAsync(book);
+                    var categoryArray = book.Category.Split(", ");
+                    foreach(var i in categoryArray)
+                    {
+                        var category = _unitOfWork.categoryRepo.GetAll().Where(a => a.Category == i).FirstOrDefault();
+                        if (category != null)
+                        {
+                            category.BookCount += 1;
+                            category = await _unitOfWork.categoryRepo.UpdateAsync(category);
+                        }
                     }
                 }
             }
@@ -109,6 +128,12 @@ namespace BulkyBookAPI.Services.Book
                 throw ex;
             }
             return book;
+        }
+
+        public async Task<List<tbBook>> GetBooksWithoutPagination()
+        {
+            var data = await _unitOfWork.bookRepo.GetAll().ToListAsync();
+            return data;
         }
     }
 }

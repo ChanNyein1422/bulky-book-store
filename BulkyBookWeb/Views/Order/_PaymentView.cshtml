@@ -1,0 +1,43 @@
+﻿<div class="p-3">
+    <p class="fw-bold h4">Select Payment <span class="text-danger">*</span> </p>
+    <div id="payment_select_warning" class="text-danger mb-2"></div>
+
+    <div class="row">
+        <div class="col-3 mb-2">
+            <div class="card border rounded-3 div_card" id="payment_cb" onclick="add_payment('payment_cb', 0.06)">
+                <div class="card-body text-center">
+                    <img class="card-title" src="../PaymentPics/CBPay.png" style="width: 80px; height:80px;" />
+                    <p class="card-text fw-bold">CB Bank</p>
+                    <p class="fw-lighter fst-italic">6 % Discount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 mb-2">
+            <div class="card border rounded-3 div_card" id="payment_kbz" onclick="add_payment('payment_kbz', 0.05)">
+                <div class="card-body text-center">
+                    <img class="card-title" src="../PaymentPics/KBZPay.png" style="width: 80px; height:80px;" />
+                    <p class="card-text fw-bold">KBZ Pay</p>
+                    <p class="fw-lighter fst-italic">5 % Discount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 mb-2">
+            <div class="card border rounded-3 div_card" id="payment_visa" onclick="add_payment('payment_visa', 0.1)">
+                <div class="card-body text-center">
+                    <img class="card-title" src="../PaymentPics/Visa.jpg" style="width: 80px; height:80px;" />
+                    <p class="card-text fw-bold">VISA</p>
+                    <p class="fw-lighter fst-italic">10% Discount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 mb-2">
+            <div class="card border rounded-3 div_card" id="payment_paypal" onclick="add_payment('payment_paypal', 0.11)">
+                <div class="card-body text-center">
+                    <img class="card-title" src="../PaymentPics/PayPal.png" style="width: 80px; height:80px;" />
+                    <p class="card-text fw-bold">PayPal Pay</p>
+                    <p class="fw-lighter fst-italic">11% Discount</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

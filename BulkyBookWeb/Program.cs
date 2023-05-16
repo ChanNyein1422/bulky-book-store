@@ -6,6 +6,7 @@ using Infra.Helper.CategoryApiRequest;
 using Infra.Helper.CountApiRequest;
 using Infra.Helper.OrderApiRequest;
 using Infra.Helper.UserApiRequest;
+using Infra.Helper.WishListApiRequest;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Server.HttpSys;
 
@@ -32,6 +33,8 @@ builder.Services.AddScoped<IBookApiRequest, BookApiRequest>();
 builder.Services.AddScoped<ICategoryApiRequest, CategoryApiRequest>();
 builder.Services.AddScoped<IOrderApiRequest, OrderApiRequest>();
 builder.Services.AddScoped<ICountApiRequest, CountApiRequest>();
+builder.Services.AddScoped<IWishListApiRequest, WishListApiRequest>();
+
 builder.Services.AddScoped<IAuth, Auth>();
 builder.Services.Configure<HttpSysOptions>(options =>
 {

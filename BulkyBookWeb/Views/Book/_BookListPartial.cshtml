@@ -1,0 +1,106 @@
+﻿@using Data.ViewModel;
+@using Infra.Services;
+@using Data.Models;
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+@using X.PagedList.Web.Common;
+@model PagedListClient<WishListViewModel>;
+@{
+    var result = User.Identity.IsAuthenticated.ToString();
+    var _role = "User";
+    var _userid = 0;
+    var _col = "row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3";
+    if (result == "True")
+    {     
+        _role = User.Claims.ToArray()[BulkyBookWeb.AuthServices.Auth.AuthDataIndex.Role].Value;
+        _userid = Convert.ToInt32(User.Claims.ToArray()[BulkyBookWeb.AuthServices.Auth.AuthDataIndex.Id].Value);
+    }
+
+}
+@if(Model.TotalCount > 0){
+
+        foreach (var item in Model.Results)
+        {
+            <div class="col mb-2" id="book_@item.book.Id">
+                <div class="card">
+                    @if (_role == "Admin")
+                    {
+                    <img src="@item.book.ThumbnailUrl" class="card-img-top" style="height: 250px; object-fit: cover;" alt="Document Thumbnail">
+                    }
+                    else
+                    {
+                    <img src="@item.book.ThumbnailUrl" class="card-img-top" style="height: 230px; object-fit: cover;" alt="Document Thumbnail">
+                    }
+                  
+                    <div class="card-body">
+                    <h5 class="card-title">@item.book.Title</h5>
+                        <div class="card-text">
+                        <p class="h6 fw-lighter fst-italic">@item.book.Category</p>
+                        <p class="fw-bold pt-3">@item.book.Price MMK</p>
+                          
+                            <div class="d-flex flex-row">
+                                <div class="ms-2">
+                                    @if (item.isWishListed == true)
+                                    {
+                                        <div id="wishList_@item.book.Id@_userid">
+                                            <a class="btn btn-light" onclick="remove_from_wishlist(@item.book.Id, @_userid)">
+                                                <i class="fa-solid fa-heart"></i>
+                                            </a>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div id="wishList_@item.book.Id@_userid">
+                                            <a class="btn btn-light" onclick="add_to_wishlist(@item.book.Id, @_userid)">
+                                                <i class="fa-regular fa-heart"></i>
+                                            </a>
+                                        </div>
+                                    }
+                                    
+                                </div>
+                                <div class="h6 fw-lighter ms-2 my-auto mx-3" id="wishlist_count_@item.book.Id">@item.WishListCount</div>
+                                <div class="vr"></div>
+                                @if (_role == "Admin")
+                                {
+                                <a class="btn btn-danger ms-2" onclick="delete_book(@item.book.Id)">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                <div id="add_cart_@item.book.Id" class="d-flex flex-row ms-auto">
+                                    <a class="btn btn-light border rounded border-dark ms-2 btn-sm" onclick="minus(@item.book.Id)">
+                                     -
+                                    </a>
+                                    <input type="text" value=1 class="form-control form-control-sm ms-2 text-center" style="width: 40px;" id="book_count_@item.book.Id" disabled />
+                                    <a class="btn btn-light border rounded border-dark ms-2 btn-sm" onclick="plus(@item.book.Id)">
+                                     +
+                                    </a>
+
+                                </div>
+                                }
+                            </div>
+                        @if(_role == "User")
+                        {
+                            <div class="d-flex flex-row">
+                                <div class="mt-1 me-3 my-auto">
+                                    <a class="btn btn-light border-dark btn-sm" onclick="load_detailform(@item.book.Id)">Details</a>
+                                </div>
+                                <div id="shop_@item.book.Id" class="ms-auto mt-2">
+                                    <a class="btn btn-success btn-sm ms-2 btn-sm" onclick="add_to_cart('@item.book.Id', '@item.book.Title', '@item.book.Price')">
+                                        <i class="fa-solid fa-cart-shopping me-2"></i> ADD TO CART
+                                    </a>
+
+                                </div>
+                            </div>
+                        }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+}
+else{
+    <p class="h2">No books here yet.</p>
+}

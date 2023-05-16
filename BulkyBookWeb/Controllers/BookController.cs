@@ -1,5 +1,6 @@
 ﻿using Data.Models;
 using Infra.Helper.BookApiRequest;
+using Infra.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
@@ -18,9 +19,41 @@ namespace BulkyBookWeb.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> _BookList(int? page = 1, int? pageSize = 5, string? sortVal = "Id", string? sortDir = "asc", string? q = "", string? category = "")
+        public async Task<IActionResult> _BookList(int? page = 1, int? pageSize = 5, string? sortVal = "Id", string? sortDir = "asc", string? q = "", string? category = "", int? userid = 0)
         {
-            var data = await this._ibook.GetAllBooks(page, pageSize, sortVal, sortDir, q, category);
+            var data = await this._ibook.GetAllBooks(page, pageSize, sortVal, sortDir, q, category, userid);
+           return PartialView(data);
+            
+        }
+        public async Task<IActionResult> _BookListScroll(int? page = 1, int? pageSize = 5, string? sortVal = "Id", string? sortDir = "asc", string? q = "", string? category = "", int? userid = 0)
+        {
+            var data = await this._ibook.GetAllBooks(page, pageSize, sortVal, sortDir, q, category, userid);
+
+
+
+            if (data.Results.Count != 0)
+            {
+
+                return PartialView(data);
+            }
+            else
+            {
+                if (page == 1)
+                {
+                    return Ok("Book Not Found");
+                }
+                else
+                {
+                  return Ok("NoResult");
+                }
+
+
+            }
+
+        }
+        public async Task<IActionResult> _BookListWithoutPagination()
+        {
+            var data = await this._ibook.GetBooksWithoutPagination();
             return PartialView(data);
         }
         //to be fixed
@@ -33,6 +66,11 @@ namespace BulkyBookWeb.Controllers
         {
             tbBook book = new tbBook();
             return PartialView(book);
+        }
+        public async Task<IActionResult> _BookDetail(int id)
+        {
+            var data = await this._ibook.GetBookById(id);
+            return PartialView(data);
         }
         public static string GetFileExtension(string base64String)
         {
@@ -105,8 +143,22 @@ namespace BulkyBookWeb.Controllers
 
         public async Task<IActionResult> DeleteBook(int id)
         {
-            var data = await this._ibook.DeleteBook(id);
-            if (data == 1)
+            var data = await this._ibook.GetBookById(id);
+
+            if (data.BookUpload != null)
+            {
+                string pdfPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\BookUpload", data.BookUpload);
+                System.IO.File.Delete(pdfPath);
+            }
+            if(data.Thumbnail != null)
+            {
+                string imgPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Thumbnails", data.Thumbnail);
+                System.IO.File.Delete(imgPath);
+            }
+            var result = await this._ibook.DeleteBook(id);
+
+
+            if (result == 1)
             {
                 return Json("Success");
                

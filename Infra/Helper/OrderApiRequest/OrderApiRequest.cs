@@ -1,5 +1,6 @@
 ﻿using Data.Models;
 using Data.ViewModel;
+using Infra.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,13 @@ namespace Infra.Helper.OrderApiRequest
             return data;
         }
 
-        public async Task<List<UserOrderViewModel>> GetAllOrders()
+        public async Task<PagedListClient<UserOrderViewModel>> GetAllOrders(int? page = 1, int? pageSize = 10, string? sortVal = "Id", string? sortDir = "asc",
+                                string? q = "")
         {
-            var url = $"api/order/getallorders";
-            var data = await ApiRequest<List<UserOrderViewModel>>.GetRequest(url.route(Request.bulkybookapi));
-            return data;
+            var url = $"api/order/getallorders?page={page}&pageSize={pageSize}&sortVal={sortVal}&sortDir={sortDir}&q={q}";
+            var data = await ApiRequest<Model<UserOrderViewModel>>.GetRequest(url.route(Request.bulkybookapi));
+            PagedListClient<UserOrderViewModel> model = PagingService<UserOrderViewModel>.Convert(page ?? 1, pageSize ?? 10, data);
+            return model;
         }
 
         public async Task<tbOrder> GetOrderById(string id)

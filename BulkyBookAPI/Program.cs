@@ -4,8 +4,10 @@ using BulkyBookAPI.Services.Dashboard;
 using BulkyBookAPI.Services.Order;
 using BulkyBookAPI.Services.OrderDetail;
 using BulkyBookAPI.Services.User;
+using BulkyBookAPI.Services.WishList;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,13 +34,15 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-builder.Services.AddScoped<IUser>(s => new UserBase(s.GetService<ApplicationDbContext>()));
+builder.Services.AddScoped<IValidate>(s => new ValidateBase(s.GetService<ApplicationDbContext>()));
+builder.Services.AddScoped<IUser>(s => new UserBase( s.GetService<ApplicationDbContext>()));
 builder.Services.AddScoped<IBook>(s => new BookBase(s.GetService<ApplicationDbContext>()));
 builder.Services.AddScoped<ICategory>(s => new CategoryBase(s.GetService<ApplicationDbContext>()));
 builder.Services.AddScoped<IOrder>(s => new OrderBase(s.GetService<ApplicationDbContext>()));
 builder.Services.AddScoped<IOrderDetail>(s => new OrderDetailBase(s.GetService<ApplicationDbContext>()));
 builder.Services.AddScoped<ICount>(s => new CountBase(s.GetService<ApplicationDbContext>()));
+builder.Services.AddScoped<IWishList>(s => new WishListBase(s.GetService<ApplicationDbContext>()));
+
 
 
 var app = builder.Build();

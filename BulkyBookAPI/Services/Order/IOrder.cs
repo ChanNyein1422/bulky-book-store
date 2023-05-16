@@ -6,7 +6,7 @@ namespace BulkyBookAPI.Services.Order
 {
     public interface IOrder
     {
-        Task<List<UserOrderViewModel>> GetAllOrders();
+        Task<Model<UserOrderViewModel>> GetAllOrders(int? page = 1, int? pageSize = 10, string? sortVal = "Id", string? sortDir = "asc", string? q = "");
         Task<List<OrderViewModel>> UpSertList(List<OrderViewModel> orders);
         Task<List<BookOrderDetailViewModel>> GetOrderDetails(string id);
         Task<tbOrder> GetOrderById(string id);

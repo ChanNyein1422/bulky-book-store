@@ -1,0 +1,52 @@
+﻿@{
+    var result = User.Identity.IsAuthenticated.ToString();
+    var _userid = 0;
+    if (result == "True")
+    {
+        _userid = Convert.ToInt32(User.Claims.ToArray()[BulkyBookWeb.AuthServices.Auth.AuthDataIndex.Id].Value);
+    }
+
+}
+
+<p class="h6 fw-bold mb-5">Your Wish Lists</p>
+<div id="wishListView"></div>
+
+
+@section scripts{
+    <script>
+        $(function () {
+            get_wishlist(@_userid);
+        });
+
+        function get_wishlist(userid){
+           $.ajax({
+                cache: false,
+                url: '@Url.Action("_UserWishListView","WishList")',
+                data: {
+                    userId : userid
+                },
+                success: function(result){
+                    $("#wishListView").empty().append(result);
+                }
+            });
+        }
+
+        function remove_from_wishlist(bookid) {
+            $.ajax({
+                cache: false,
+                url: '@Url.Action("Delete","WishList")',
+                data: {
+                    userId: @_userid,
+                    bookId: bookid
+                },
+                success: function (data) {
+                    if (data == 1) {
+                        get_wishlist(@_userid);
+                    }
+                }
+            });
+        }
+    </script>
+
+}
+

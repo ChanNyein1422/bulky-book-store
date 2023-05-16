@@ -13,16 +13,17 @@ namespace BulkyBookAPI.Services.User
     {
         private ApplicationDbContext _context;
         UnitOfWork _unitOfWork;
+        IValidate _validate;
 
         public UserBase(ApplicationDbContext context)
         {
             _context = context;
             this._unitOfWork = new UnitOfWork(_context);
+            this._validate = new ValidateBase(_context);
         }
         public async Task<Model<tbUser>> GetAllUsers(int? page = 1, int? pageSize = 10, string? sortVal = "Id", string? sortDir = "asc", string? q = "")
         {
-            Expression<Func<tbUser, bool>> basicFilter = null;
-            Expression<Func<tbUser, bool>> emailFilter = null;
+            Expression<Func<tbUser, bool>>? basicFilter = null;
             IQueryable<tbUser> query = _unitOfWork.userRepo.GetAll().AsQueryable();
             if (!String.IsNullOrEmpty(q))
             {
@@ -53,29 +54,18 @@ namespace BulkyBookAPI.Services.User
         {
             try
             {
-                var checkEmail = _unitOfWork.userRepo.GetAll().Any(u => u.Email == user.Email && u.Id != user.Id);
-                var checkUsername = _unitOfWork.userRepo.GetAll().Any(u => u.Name == user.Name && u.Id != user.Id);
-
-
-
-                  
-                   
-                    if (user.ConfirmPassword != user.Password)
-                    {
-                        user = new tbUser();
-                        user.ReturnMessage = "Unmatch Password";
-                    }
-                        else if (checkEmail)
+               
+                        if (_validate.CheckEmail(user))
                     {
                         user = new tbUser();
                         user.ReturnMessage = "Email Already Exists";
                     }
-                        else if (checkUsername)
+                        else if (_validate.CheckUserName(user))
                     {
                         user = new tbUser();
                         user.ReturnMessage = "User Name Already Exists";
                     }
-                    else if (!checkEmail & !checkUsername)
+                    else if (!_validate.CheckEmail(user) & !_validate.CheckUserName(user))
                     {
                         if (user.Id > 0)
                         {

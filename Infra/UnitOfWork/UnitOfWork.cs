@@ -16,6 +16,7 @@ namespace Infra.UnitOfWork
         private IRepository<tbCategory>? _categoryRepo;
         private IRepository<tbOrder>? _orderRepo;
         private IRepository<tbOrderDetail>? _orderDetailRepo;
+        private IRepository<tbWishList>? _wishListRepo;
 
         private ApplicationDbContext _ctx;
         private bool m_IsDisposed;
@@ -99,6 +100,17 @@ namespace Infra.UnitOfWork
                     _orderDetailRepo = new Repository<tbOrderDetail>(_ctx);
                 }
                 return _orderDetailRepo;
+            }
+        }
+        public IRepository<tbWishList> wishListRepo
+        {
+            get
+            {
+                if (_wishListRepo == null)
+                {
+                    _wishListRepo = new Repository<tbWishList>(_ctx);
+                }
+                return _wishListRepo;
             }
         }
     }
