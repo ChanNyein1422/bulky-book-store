@@ -25,7 +25,6 @@ namespace Infra.Helper.BookApiRequest
             var data = await ApiRequest<Model<WishListViewModel>>.GetRequest(url.route(Request.bulkybookapi));
             //var data = await GetRequest<Model<tbUser>>(url.route(Request.firstapi));
             PagedListClient<WishListViewModel> model = PagingService<WishListViewModel>.Convert(page ?? 1, pageSize ?? 10, data);
-
             return model;
         }
         public async Task<tbBook> GetBookById(int id)
