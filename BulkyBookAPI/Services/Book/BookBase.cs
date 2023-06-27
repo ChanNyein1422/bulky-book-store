@@ -11,6 +11,7 @@ namespace BulkyBookAPI.Services.Book
 {
     public class BookBase : IBook
     {
+
         private ApplicationDbContext _context;
         UnitOfWork _unitOfWork;
         public BookBase(ApplicationDbContext context)
